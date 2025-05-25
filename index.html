@@ -17,8 +17,8 @@ var respecConfig = {
   subtitle: "Increasing confidence during presentation of verifiable credentials",
   wg: "W3C Credentials Community Group",
   group: "credentials",
-  github: "https://github.com/w3c-ccg/confidence-method-spec/",
-  edDraftURI: "https://w3c-ccg.github.io/confidence-method-spec/",
+  github: "https://github.com/w3c-ccg/vc-confidence-method/",
+  edDraftURI: "https://w3c-ccg.github.io/vc-confidence-method/",
   wgURI: "https://w3c-ccg.github.io/",
   wgPublicList: "public-credentials",
   xref: "web-platform",
@@ -190,8 +190,16 @@ Terminology used throughout this document is defined in the
           </p>
       </section>
       <section id="conformance">
-        <p class="issue" title="TBD">
-          Add conformance section
+        <p>
+A <dfn>conforming document</dfn> is any concrete expression of the data model
+that follows the relevant normative requirements in Section
+<a href="#data-model"></a>.
+        </p>
+
+        <p>
+A <dfn>conforming processor</dfn> is any algorithm realized as software and/or
+hardware that generates and/or consumes a [=conforming document=]. Conforming
+processors MUST produce errors when non-conforming documents are consumed.
         </p>
       </section>
     </section>
