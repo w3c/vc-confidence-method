@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
-   <head>
-      <meta charset="utf-8" />
-      <title>Confidence Method v0.9</title>
-      <script src="https://www.w3.org/Tools/respec/respec-w3c"class="remove"></script>
-      <script class="remove"
-        src="https://cdn.jsdelivr.net/gh/w3c/respec-vc@3.4.3/dist/main.js"></script>
-      <script class="remove">
+  <head>
+    <meta charset="utf-8" />
+    <title>Confidence Method v0.9</title>
+    <script src="https://www.w3.org/Tools/respec/respec-w3c"class="remove"></script>
+    <script class="remove"
+      src="https://cdn.jsdelivr.net/gh/w3c/respec-vc@3.4.3/dist/main.js"></script>
+    <script class="remove">
 // All config options at https://respec.org/docs/
 var respecConfig = {
   specStatus: "CG-DRAFT",
@@ -31,7 +31,9 @@ var respecConfig = {
     "no-unused-dfns": false,
     "informative-dfn": false
   },
-  xref: ["INFRA", "I18N-GLOSSARY", "VC-DATA-MODEL-2.0", "VC-DATA-INTEGRITY"],
+  xref: [
+    "INFRA", "I18N-GLOSSARY", "VC-DATA-MODEL-2.0", "VC-DATA-INTEGRITY", "CID"
+  ],
   postProcess: [window.respecVc.createVcExamples],
   otherLinks: [{
     key: "Related Documents",
@@ -41,231 +43,313 @@ var respecConfig = {
     }]
   }]
 };
-      </script>
-   </head>
-   <body>
-      <section id='abstract'>
-<p>
-This specification defines the Confidence Method property that can be used
-with the the W3C Verifiable Credentials Data Model (VCDM). An issuer can
-include one or more Confidence Methods in a verifiable credential to inform
-verifiers of mechanisms they could use to increase their confidence in the
-truth of a variety of things, including the following:
-</p>
-<p>
-  <ul>
-    <li>
-a particular identifier in the verifiable credential refers to the same entity
-the issuer intended it to refer to,
-    </li>
-    <li>
-an entity, such as the presenter of a verifiable credential, is the same entity
-that the issuer made claims about,
-    </li>
-    <li>
-an entity controls, or has been designated to use, one or more mechanisms for
-demonstrating proof-of-possession or proof-of-use of cryptographic key
-material,
-    </li>
-    <li>
-an entity identified in the verifiable credential can be checked against a
-biometric.
-    </li>
-  </ul>
-</p>
-      </section>
-      <section id='sotd'>
-         <p>
-            This is an experimental specification and is undergoing regular revisions. It
-            is not fit for production deployment.
-         </p>
-      </section>
-      <section class="informative">
-         <h2>Background</h2>
-TBD
-      </section>
-      <section>
-         <h2>Terminology</h2>
-         <p>
-            The following terms are used to describe concepts involved in the
-            generation of Verifiable Credentials and Verifiable Presentations
-            using the confidence method property defined by this specification.
-         </p>
-         <dl>
-            <dt><dfn>Confidence Method</dfn></dt>
-            <dd>
-TBD
-            </dd>
-         </dl>
-      </section>
-      <section>
-         <h2>Confidence Method</h2>
-        <p>
-This specification defines the <code>confidenceMethod</code> <a>property</a>
-for expressing confidence method information in a
-<code>credentialSubject</code> in a <a>verifiable credential</a>.
-        </p>
-
-        <p>
-A <a>verifier</a> can decide to accept <a>claims</a> in a <a>verifiable
-credential</a> without requiring use of the confidence method, or use a
-different mechanism to increase their confidence about whether, for
-example, the <a>holder</a> is the same <a>entity</a> the issuer made
-<a>claims</a> about in the <a>verifiable credential</a>. Such a decision
-can impact the <a>verifier</a>'s liability or lack thereof if not
-specified by other means such as a <code>termsOfUse</code> policy.
-        </p>
-
-        <div class="note">
-          <p>
-For example, an <a>issuer</a> can include a confidence method based on public
-key cryptography in the <a>verifiable credential</a>. A <a>holder</a> can
-demonstrate they are able to generate and include a <a>proof</a> with a
-cryptographic signature in the <a>verifiable presentation</a> that will verify
-against the verification key expressed in the confidence method in the
-embedded <a>verifiable credential</a>.
-          </p>
-          <p>
-A <a>verifier</a> can validate that the <a>holder</a> controls,
-or has been designated the ability to use, a confidence method
-by verifying the <a>proof</a> of the <a>verifiable
-presentation</a> using the information in the confidence method. The
-confidence method can include the verification key, or the type of the
-confidence method can define that the verification key is to be inferred from
-other <a>properties</a> in the <a>verifiable credential</a>, such as the
-<code>credentialSubject.id</code>.
-          </p>
-        </div>
-
-        <dl>
-          <dt><dfn>confidenceMethod</dfn></dt>
-          <dd>
-          <dd>
-            <p>
-If present, the value of the <code>confidenceMethod</code> <a>property</a> is
-one or more confidence methods. Each confidence method is bound to one or more
-claims in the <a>verifiable credential</a>, and provides enough information for a
-<a>verifier</a> to determine whether the <a>holder</a> can generate a
-<a>verifiable presentation</a> to increase the <a>verifier's</a> confidence
-that they are the same <a>entity</a> referenced by the confidence method.
-This is referred to as satisfying the confidence method. It is required that
-the <a>issuer</a> verifies the <a>holder</a> can satisfy each
-<code>confidenceMethod</code> the <a>issuer</a> includes in the
-<a>claims</a> of the <a>verifiable credential</a>s they issue.
-            </p>
-            <p>
-Each confidence method MUST specify its <code>type</code> and MAY specify an
-<code>id</code>. The precise <a>properties</a> and semantics of each
-confidence method are determined by the specific
-<code>confidenceMethod</code> type definition.
-            </p>
-          </dd>
-        </dl>
-
-        <p>
-The following example demonstrates a confidence method based on proving
-possession of a cryptographic key. The corresponding public key is a
-type-specific property of the confidence method.
-        </p>
-
-       <pre class="example nohighlight"
-          title="Usage of the confirmationMethod property of type VerificationKeyConfirmation">
-{
-  "@context": [
-    "https://www.w3.org/ns/credentials/v2",
-    "https://www.w3.org/ns/credentials/examples/v2"
-  ],
-  "id": "http://example.edu/credentials/3732",
-  "type": ["VerifiableCredential", "UniversityDegreeCredential"],
-  "issuer": "https://example.edu/issuers/14",
-  "validFrom": "2010-01-01T19:23:24Z",
-  "credentialSubject": {
-    <span class="highlight">"confidenceMethod": [{
-      "type": "VerificationKeyConfirmation",
-      "publicKeyJwk": {
-        "crv": "Ed25519",
-        "x": "VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ",
-        "kty": "OKP",
-        "kid": "_Qq0UL2Fq651Q0Fjd6TvnYE-faHiOpRlPVQcY_-tA4A"
-      }
-    },{
-      "type": "VerificationKeyConfirmation",
-      "publicKeyMultibase": "zH3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"
-    }]</span>,
-    "degree": {
-      "type": "BachelorDegree",
-      "name": "Bachelor of Science and Arts"
-    }
-  },
-  "proof": { <span class="comment">...</span> }
+  </script>
+  <style>
+code {
+  color: rgb(199, 73, 0);
+  font-weight: bold;
 }
-        </pre>
+pre {
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+pre .highlight {
+  font-weight: bold;
+  color: Green;
+}
+pre .subject {
+  font-weight: bold;
+  color: RoyalBlue;
+}
+pre .property {
+  font-weight: bold;
+  color: DarkGoldenrod;
+}
+pre .comment {
+  font-weight: bold;
+  color: SteelBlue;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.color-text {
+  font-weight: bold;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+ol.algorithm {
+  counter-reset: numsection;
+  list-style-type: none;
+}
+ol.algorithm li {
+  margin: 0.5em 0;
+}
+ol.algorithm li:before {
+  font-weight: bold;
+  counter-increment: numsection;
+  content: counters(numsection, ".") ") ";
+}
+.supported {
+  background-color: #93c47d;
+}
+.missing {
+  background-color: #e06666;
+}
+table.simple {
+    border-collapse: collapse;
+    margin: 25px 0;
+    min-width: 400px;
+    border: 1px solid #dddddd;
+}
+table.simple thead tr {
+    background-color: #005a9c;
+    color: #ffffff;
+    text-align: left;
+}
+table.simple th,
+table.simple td {
+    padding: 12px 15px;
+    vertical-align: top;
+    text-align: left;
+}
+table.simple tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+table.simple tbody tr:nth-of-type(even) {
+    background-color: #00000008;
+}
+table.simple tbody tr:last-of-type {
+    border-bottom: 2px solid #005a9c;
+}
+    </style>
+  </head>
+  <body>
+    <section id='abstract'>
+      <p>
+This specification defines a mechanism that can be used with the
+[[[VC-DATA-MODEL-2.0]]] to increase a [=verifier|verifier's=] confidence about a
+particular [=subject=] identified in a [=verifiable credential=].
+    </section>
 
-        <p class="note">
-A confidence method can express various metadata such as the <a>issuer</a>'s
-level of confidence that the <a>holder</a> is the entity referenced by a
-<a>subject</a> of the <a>verifiable credential</a>, specific form factors or
-mechanisms of authenticators, and/or references to other <a>verifiable credentials</a>
-or versioned trust frameworks. For example, an <a>issuer</a> can make a
-<a>claim</a> about a confidence method that is based on a cryptographic key
-pair, but to produce a signature using that key, the <a>holder</a> has to unlock
-a device using multi-factor authentication.
-        </p>
+    <section id='sotd'>
+      <p>
+This is an experimental specification and is undergoing regular revisions. It is
+not fit for production deployment.
+      </p>
+    </section>
 
+    <section class="informative">
+      <h2>Introduction</h2>
+      <p>
+When a [=verifier=] performs the process of [=validate|validating=] a
+[=verifiable credential=], it is useful to be able to raise the confidence level
+that the [=subjects=] identified in a [=verifiable credential=] are the same
+ones that interacted with the [=issuer=] when it performed its vetting process
+to issue the [=verifiable credential=]. For example, when an employer (the
+[=issuer=]) issues a corporate identification card to an employee (the
+[=subject=]), it might require that the employee bind a particular cryptographic
+key (<a data-cite="VC-DATA-INTEGRITY#verification-method">verification
+method</a>) to the [=verifiable credential=] during the issuing process. In that
+case, the [=issuer=] can use this specification to convey to the [=verifier=]
+which cryptographic key was bound during the initial identity assurance process.
+      </p>
+
+      <p>
+In other words, an [=issuer=] can use this specification to convey which
+provable mechanisms it used to bind [=claims=] in a [=verifiable credential=] so
+that a [=verifier=] can increase their confidence in the truth of a variety of
+things, including the following:
+      </p>
+
+      <ul>
+        <li>
+a particular identifier in the [=verifiable credential=] refers to the same
+[=subject=] the issuer intended it to refer to,
+        </li>
+        <li>
+a [=subject=], such as the [=presentation|presenter=] of a [=verifiable
+credential=], is the same [=subject=] that the [=issuer=] made [=claims=] about,
+        </li>
+        <li>
+a [=subject=] [=controller|controls=], or has been designated to use, one or
+more mechanisms for demonstrating proof-of-possession of cryptographic key
+material,
+        </li>
+        <li>
+a [=subject=] identified in the [=verifiable credential=] can be checked against
+a biometric.
+        </li>
+      </ul>
+
+      <section class="informative">
+        <h2>Terminology</h2>
+          <p>
+Terminology used throughout this document is defined in the
+<a data-cite="VC-DATA-MODEL-2.0#terminology">Terminology</a> section of the
+[[[VC-DATA-MODEL-2.0]]] and the [[[VC-DATA-INTEGRITY]]] specification.
+          </p>
       </section>
-
       <section id="conformance">
-         <p class="issue" title="TBD">
-            Add conformance section
-         </p>
+        <p class="issue" title="TBD">
+          Add conformance section
+        </p>
       </section>
-      <section>
-         <h2>Security Considerations</h2>
-         <p class="issue" title="TBD">
-            Add security considerations section
-         </p>
-      </section>
-      <section class="normative">
-         <h1>The Registry</h1>
-         <section class="normative">
-            <h1>Confidence Methods</h1>
-            <p>
-               This table summarizes the Confidence Method specifications currently
-               in development. The table lists the method name, associated specification,
-               authors, stability of the specification, and conformance test suite
-               (if applicable).
-            </p>
-            <table class="simple">
-               <thead>
-                  <tr>
-                     <th>Method Name</th>
-                     <th>Specification</th>
-                     <th>Authors</th>
-                     <th>Stability</th>
-                     <th>Test Suite</th>
-                  </tr>
-               </thead>
-               <tbody>
-                  <tr>
-                     <td>
-                        VerificationKeyConfirmation
-                     </td>
-                     <td>
-                        This document
-                     </td>
-                     <td>
-                        Oliver Terbu
-                     </td>
-                     <td>
-                        Experimental
-                     </td>
-                     <td>
-                        None
-                     </td>
-                  </tr>
-               </tbody>
-            </table>
-         </section>
-      </section>
-   </body>
+    </section>
+
+    <section>
+      <h2>Confidence Method</h2>
+      <p>
+        This specification defines the `confidenceMethod` property
+        for expressing confidence method information in a
+        `credentialSubject` in a [=verifiable credential=].
+      </p>
+
+      <p>
+        A [=verifier=] can decide to accept [=claims=] in a <a>verifiable
+          credential</a> without requiring use of the confidence method, or use a
+        different mechanism to increase their confidence about whether, for
+        example, the [=holder=] is the same entity the issuer made
+        [=claims=] about in the [=verifiable credential=]. Such a decision
+        can impact the [=verifier=]'s liability or lack thereof if not
+        specified by other means such as a `termsOfUse` policy.
+      </p>
+
+      <div class="note">
+        <p>
+          For example, an [=issuer=] can include a confidence method based on public
+          key cryptography in the [=verifiable credential=]. A [=holder=] can
+          demonstrate they are able to generate and include a [=data integrity proof|proof=] with a
+          cryptographic signature in the [=verifiable presentation=] that will verify
+          against the verification key expressed in the confidence method in the
+          embedded [=verifiable credential=].
+        </p>
+        <p>
+          A [=verifier=] can validate that the [=holder=] controls,
+          or has been designated the ability to use, a confidence method
+          by verifying the [=data integrity proof|proof=] of the <a>verifiable
+            presentation</a> using the information in the confidence method. The
+          confidence method can include the verification key, or the type of the
+          confidence method can define that the verification key is to be inferred from
+          other properties in the [=verifiable credential=], such as the
+          `credentialSubject.id`.
+        </p>
+      </div>
+
+      <dl>
+        <dt><dfn>confidenceMethod</dfn></dt>
+        <dd>
+        <dd>
+          <p>
+            If present, the value of the `confidenceMethod` property is
+            one or more confidence methods. Each confidence method is bound to one or more
+            claims in the [=verifiable credential=], and provides enough information for a
+            [=verifier=] to determine whether the [=holder=] can generate a
+            [=verifiable presentation=] to increase the [=verifier's=] confidence
+            that they are the same entity referenced by the confidence method.
+            This is referred to as satisfying the confidence method. It is required that
+            the [=issuer=] verifies the [=holder=] can satisfy each
+            `confidenceMethod` the [=issuer=] includes in the
+            [=claims=] of the [=verifiable credential=]s they issue.
+          </p>
+          <p>
+            Each confidence method MUST specify its `type` and MAY specify an
+            `id`. The precise properties and semantics of each
+            confidence method are determined by the specific
+            `confidenceMethod` type definition.
+          </p>
+        </dd>
+      </dl>
+
+      <p>
+        The following example demonstrates a confidence method based on proving
+        possession of a cryptographic key. The corresponding public key is a
+        type-specific property of the confidence method.
+      </p>
+
+      <pre class="example nohighlight"
+        title="Usage of the confirmationMethod property of type VerificationKeyConfirmation">
+  {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2",
+      "https://www.w3.org/ns/credentials/examples/v2"
+    ],
+    "id": "http://example.edu/credentials/3732",
+    "type": ["VerifiableCredential", "UniversityDegreeCredential"],
+    "issuer": "https://example.edu/issuers/14",
+    "validFrom": "2010-01-01T19:23:24Z",
+    "credentialSubject": {
+      <span class="highlight">"confidenceMethod": [{
+        "id": "#key-abc",
+        "type": "JsonWebKey",
+        "controller": "",
+        "publicKeyJwk": {
+          "crv": "Ed25519",
+          "x": "VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ",
+          "kty": "OKP",
+          "kid": "_Qq0UL2Fq651Q0Fjd6TvnYE-faHiOpRlPVQcY_-tA4A"
+        }
+      }, {
+        "id": "did:example:123#key-567",
+        "type": "Multikey",
+        "publicKeyMultibase": "zH3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"
+      }, {
+        "id": "did:example:1234",
+        "type": "ControlledIdentifierDocument"
+      }]</span>,
+      "degree": {
+        "type": "BachelorDegree",
+        "name": "Bachelor of Science and Arts"
+      }
+    },
+    "proof": { <span class="comment">...</span> }
+  }
+          </pre>
+
+      <p class="note">
+A confidence method can express various metadata such as the [=issuer=]'s level
+of confidence that the [=holder=] is the [=subject=] of the [=verifiable
+credential=], specific form factors or mechanisms of authenticators, and/or
+references to other [=verifiable credentials=] or versioned trust frameworks.
+For example, an [=issuer=] can make a [=claim=] about a confidence method that
+is based on a cryptographic key pair, but to produce a signature using that key,
+the [=holder=] has to unlock a device using multi-factor authentication.
+      </p>
+
+    </section>
+
+    <section>
+      <h2>Security Considerations</h2>
+      <div class="issue" title="Add Security Considerations section">
+Add security considerations section that includes at least the following topics:
+        <ul>
+          <li>
+Since confidence methods can be selectively disclosed, verifiers need to
+explicitly ask for confidence methods in high-assurance use cases when
+dealing with proof mechanisms that allow for selective or unlinkable disclosure.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Privacy Considerations</h2>
+      <div class="issue" title="Add Privacy Considerations section">
+Add privacy considerations section that includes at least the following topics:
+        <ul>
+          <li>
+Confidence methods are expected to be selectively disclosed, as they might not
+be necessary in many low-assurance use cases, or where high-assurance is
+achieved through a different means such as in-person verification against a
+photo.
+          </li>
+          <li>
+If a confidence method is unlinkably disclosed, it can reveal
+correlatable identifiers, such as public cryptographic key identifiers.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+  </section>
+  </body>
 </html>
