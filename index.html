@@ -279,9 +279,12 @@ Terminology used throughout this document is defined in the
     "validFrom": "2010-01-01T19:23:24Z",
     "credentialSubject": {
       <span class="highlight">"confidenceMethod": [{
-        "id": "#key-abc",
+        "type": "BiometricPortraitImage",
+        "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAgAAZABkAAD",
+      }, {
+        "id": "urn:uuid:818d5ca0-3978-11f0-8658-4f17a1afd652#key-abc",
         "type": "JsonWebKey",
-        "controller": "",
+        "controller": "urn:uuid:818d5ca0-3978-11f0-8658-4f17a1afd652",
         "publicKeyJwk": {
           "crv": "Ed25519",
           "x": "VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ",
@@ -291,10 +294,11 @@ Terminology used throughout this document is defined in the
       }, {
         "id": "did:example:123#key-567",
         "type": "Multikey",
+        "controller": "did:example:123",
         "publicKeyMultibase": "zH3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"
       }, {
         "id": "did:example:1234",
-        "type": "ControlledIdentifierDocument"
+        "type": "DecentralizedIdentifierDocument"
       }]</span>,
       "degree": {
         "type": "BachelorDegree",
