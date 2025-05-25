@@ -181,7 +181,7 @@ a biometric.
         </li>
       </ul>
 
-      <section class="informative">
+      <section class="normative">
         <h2>Terminology</h2>
           <p>
 Terminology used throughout this document is defined in the
@@ -197,73 +197,59 @@ Terminology used throughout this document is defined in the
     </section>
 
     <section>
-      <h2>Confidence Method</h2>
+      <h2>Data Model</h2>
       <p>
-        This specification defines the `confidenceMethod` property
-        for expressing confidence method information in a
-        `credentialSubject` in a [=verifiable credential=].
+This specification defines the `confidenceMethod` property for expressing
+confidence method information in a `credentialSubject` in a [=verifiable
+credential=].
       </p>
-
-      <p>
-        A [=verifier=] can decide to accept [=claims=] in a <a>verifiable
-          credential</a> without requiring use of the confidence method, or use a
-        different mechanism to increase their confidence about whether, for
-        example, the [=holder=] is the same entity the issuer made
-        [=claims=] about in the [=verifiable credential=]. Such a decision
-        can impact the [=verifier=]'s liability or lack thereof if not
-        specified by other means such as a `termsOfUse` policy.
-      </p>
-
-      <div class="note">
-        <p>
-          For example, an [=issuer=] can include a confidence method based on public
-          key cryptography in the [=verifiable credential=]. A [=holder=] can
-          demonstrate they are able to generate and include a [=data integrity proof|proof=] with a
-          cryptographic signature in the [=verifiable presentation=] that will verify
-          against the verification key expressed in the confidence method in the
-          embedded [=verifiable credential=].
-        </p>
-        <p>
-          A [=verifier=] can validate that the [=holder=] controls,
-          or has been designated the ability to use, a confidence method
-          by verifying the [=data integrity proof|proof=] of the <a>verifiable
-            presentation</a> using the information in the confidence method. The
-          confidence method can include the verification key, or the type of the
-          confidence method can define that the verification key is to be inferred from
-          other properties in the [=verifiable credential=], such as the
-          `credentialSubject.id`.
-        </p>
-      </div>
 
       <dl>
         <dt><dfn>confidenceMethod</dfn></dt>
         <dd>
         <dd>
           <p>
-            If present, the value of the `confidenceMethod` property is
-            one or more confidence methods. Each confidence method is bound to one or more
-            claims in the [=verifiable credential=], and provides enough information for a
-            [=verifier=] to determine whether the [=holder=] can generate a
-            [=verifiable presentation=] to increase the [=verifier's=] confidence
-            that they are the same entity referenced by the confidence method.
-            This is referred to as satisfying the confidence method. It is required that
-            the [=issuer=] verifies the [=holder=] can satisfy each
-            `confidenceMethod` the [=issuer=] includes in the
-            [=claims=] of the [=verifiable credential=]s they issue.
+If present, the value of the `confidenceMethod` property is one or more
+confidence methods. Each confidence method is bound to one or more [=subjects=]
+in the [=verifiable credential=], and provides enough information for a
+[=verifier=] to determine whether the [=holder=] can generate a [=verifiable
+presentation=] to increase the [=verifier's=] confidence that they are the same
+entity referenced by the confidence method. This is referred to as satisfying
+the confidence method. It is required that the [=issuer=] verifies that the
+[=holder=] can satisfy each `confidenceMethod` the [=issuer=] includes in the
+[=claims=] of the [=verifiable credential=]s they issue.
           </p>
           <p>
-            Each confidence method MUST specify its `type` and MAY specify an
-            `id`. The precise properties and semantics of each
-            confidence method are determined by the specific
-            `confidenceMethod` type definition.
+Each confidence method MUST specify its `type` and MAY specify an `id`. The
+precise properties and semantics of each confidence method are determined by the
+specific `confidenceMethod` type definition.
           </p>
         </dd>
       </dl>
 
       <p>
-        The following example demonstrates a confidence method based on proving
-        possession of a cryptographic key. The corresponding public key is a
-        type-specific property of the confidence method.
+A [=verifier=] can decide to accept [=claims=] in a [=verifiable credential=]
+without requiring use of the confidence method, or use a different mechanism to
+increase their confidence about whether, for example, the [=holder=] is the same
+entity the issuer made [=claims=] about in the [=verifiable credential=]. Such a
+decision can impact the [=verifier=]'s liability when accepting
+[=verifiable credentials=] during certain use cases.
+      </p>
+
+      <p>
+A [=verifier=] can validate that the [=holder=] controls, or has been designated
+the ability to use, a confidence method by verifying the [=data integrity
+proof|proof=] of the <a>verifiable presentation</a> using the information in the
+confidence method. The confidence method can include the verification key, or
+the type of the confidence method can define that the verification key is to be
+inferred from other properties in the [=verifiable credential=], such as the
+`credentialSubject.id`.
+      </p>
+
+      <p>
+The following example demonstrates the various types of confidence methods
+that can be used, including public cryptographic keys, verification methods,
+and Decentralized Identifier Documents.
       </p>
 
       <pre class="example nohighlight"
