@@ -1,276 +1,435 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Confidence Method v1.0</title>
-    <script src="https://www.w3.org/Tools/respec/respec-w3c" class="remove"></script>
-    <script class="remove"
-      src="https://cdn.jsdelivr.net/gh/w3c/respec-vc@3.4.3/dist/main.js">
+
+<head>
+  <meta charset="utf-8">
+  <title>Confidence Method v1.0</title>
+  <script src="https://www.w3.org/Tools/respec/respec-w3c"
+    class="remove"></script>
+  <script class="remove"
+    src="https://cdn.jsdelivr.net/gh/w3c/respec-vc@3.4.3/dist/main.js">
     </script>
-    <script class="remove">
-// All config options at https://respec.org/docs/
-var respecConfig = {
-  specStatus: "FPWD",
-  publishDate: "2025-10-30",
-  editors: [{
-    name: "Joe Andrieu",
-    url: "https://www.linkedin.com/in/joe-andrieu/",
-    company: "Legendary Requirements",
-    companyURL: "https://legreq.com/",
-    w3cid: 97261
-  }, {
-    name: "Denken Chen",
-    url: "https://denkeni.org/",
-    company: "Ministry of Digital Affairs, Taiwan",
-    companyURL: "https://moda.gov.tw/",
-    w3cid: 158074
-  }],
-  shortName: "vc-confidence-method",
-  subtitle: "Increasing confidence during presentation of verifiable credentials",
-  wg: "W3C Credentials Community Group",
-  group: "vc",
-  github: "https://github.com/w3c/vc-confidence-method/",
-  edDraftURI: "https://w3c.github.io/vc-confidence-method/",
-  inlineCSS: true,
-  maxTocLevel: 4,
-  localBiblio: {},
-  doJsonLd: true,
-  includePermalinks: false,
-  lint: {
-    "no-unused-dfns": false,
-    "informative-dfn": false
-  },
-  xref: [
-    "INFRA", "I18N-GLOSSARY", "VC-DATA-MODEL-2.0", "VC-DATA-INTEGRITY", "CID"
-  ],
-  postProcess: [window.respecVc.createVcExamples],
-  otherLinks: [{
-    key: "Related Documents",
-    data: [{
-      value: "Verifiable Credentials Data Model v2.0",
-      href: "https://www.w3.org/TR/vc-data-model-2.0/"
-    }]
-  }]
-};
+  <script class="remove">
+    // All config options at https://respec.org/docs/
+    var respecConfig = {
+      specStatus: "FPWD",
+      publishDate: "2025-10-30",
+      editors: [{
+        name: "Joe Andrieu",
+        url: "https://www.linkedin.com/in/joe-andrieu/",
+        company: "Legendary Requirements",
+        companyURL: "https://legreq.com/",
+        w3cid: 97261
+      }, {
+        name: "Denken Chen",
+        url: "https://denkeni.org/",
+        company: "Ministry of Digital Affairs, Taiwan",
+        companyURL: "https://moda.gov.tw/",
+        w3cid: 158074
+      }],
+      shortName: "vc-confidence-method",
+      subtitle: "Increasing confidence during presentation of verifiable credentials",
+      wg: "W3C Credentials Community Group",
+      group: "vc",
+      github: "https://github.com/w3c/vc-confidence-method/",
+      edDraftURI: "https://w3c.github.io/vc-confidence-method/",
+      inlineCSS: true,
+      maxTocLevel: 4,
+      localBiblio: {
+        "NIST-SP-800-63-4": {
+          "title": "Digital Identity Guidelines",
+          "href": "https://pages.nist.gov/800-63-4/sp800-63.html",
+          "authors": [
+            "David Temoshok",
+            "Yee-Yin Choong",
+            "Ryan Galluzzo",
+            "Connie LaSalle",
+            "Andrew Regenscheid",
+            "Diana Proud-Madruga",
+            "Sarbari Gupta",
+            "Naomi Lefkovitz"
+          ],
+          "publisher": "National Institute of Standards and Technology",
+          "date": "August 2025",
+          "id": "NIST SP 800-63-4"
+        },
+        "EIDAS2": {
+          "title": "Regulation (EU) 2024/1183 of the European Parliament and of the Council of 11 April 2024 amending Regulation (EU) No 910/2014 as regards establishing the European Digital Identity Framework",
+          "href": "http://data.europa.eu/eli/reg/2024/1183/oj",
+          "authors": [
+            "European Parliament",
+            "Council of the European Union"
+          ],
+          "publisher": "Official Journal of the European Union",
+          "date": "30 April 2024"
+        }
+      },
+      doJsonLd: true,
+      includePermalinks: false,
+      lint: {
+        "no-unused-dfns": false,
+        "informative-dfn": false
+      },
+      xref: [
+        "INFRA", "I18N-GLOSSARY", "VC-DATA-MODEL-2.0", "VC-DATA-INTEGRITY", "CID"
+      ],
+      postProcess: [window.respecVc.createVcExamples],
+      otherLinks: [{
+        key: "Related Documents",
+        data: [{
+          value: "Verifiable Credentials Data Model v2.0",
+          href: "https://www.w3.org/TR/vc-data-model-2.0/"
+        }]
+      }]
+    };
   </script>
   <style>
-code {
-  color: rgb(199, 73, 0);
-  font-weight: bold;
-}
-pre {
-  overflow-x: auto;
-  white-space: pre-wrap;
-}
-pre .highlight {
-  font-weight: bold;
-  color: Green;
-}
-pre .subject {
-  font-weight: bold;
-  color: RoyalBlue;
-}
-pre .property {
-  font-weight: bold;
-  color: DarkGoldenrod;
-}
-pre .comment {
-  font-weight: bold;
-  color: SteelBlue;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-.color-text {
-  font-weight: bold;
-  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
-}
-ol.algorithm {
-  counter-reset: numsection;
-  list-style-type: none;
-}
-ol.algorithm li {
-  margin: 0.5em 0;
-}
-ol.algorithm li:before {
-  font-weight: bold;
-  counter-increment: numsection;
-  content: counters(numsection, ".") ") ";
-}
-.supported {
-  background-color: #93c47d;
-}
-.missing {
-  background-color: #e06666;
-}
-table.simple {
-    border-collapse: collapse;
-    margin: 25px 0;
-    min-width: 400px;
-    border: 1px solid #dddddd;
-}
-table.simple thead tr {
-    background-color: #005a9c;
-    color: #ffffff;
-    text-align: left;
-}
-table.simple th,
-table.simple td {
-    padding: 12px 15px;
-    vertical-align: top;
-    text-align: left;
-}
-table.simple tbody tr {
-    border-bottom: 1px solid #dddddd;
-}
-table.simple tbody tr:nth-of-type(even) {
-    background-color: #00000008;
-}
-table.simple tbody tr:last-of-type {
-    border-bottom: 2px solid #005a9c;
-}
-    </style>
-  </head>
-  <body>
-    <section id='abstract'>
-      <p>
-This specification defines a mechanism that can be used with the
-[[[VC-DATA-MODEL-2.0]]] to increase a [=verifier|verifier's=] confidence about a
-particular [=subject=] identified in a [=verifiable credential=].
-    </section>
+    code {
+      color: rgb(199, 73, 0);
+      font-weight: bold;
+    }
 
-    <section id='sotd'>
+    pre {
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    pre .highlight {
+      font-weight: bold;
+      color: Green;
+    }
+
+    pre .subject {
+      font-weight: bold;
+      color: RoyalBlue;
+    }
+
+    pre .property {
+      font-weight: bold;
+      color: DarkGoldenrod;
+    }
+
+    pre .comment {
+      font-weight: bold;
+      color: SteelBlue;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    .color-text {
+      font-weight: bold;
+      text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+    }
+
+    ol.algorithm {
+      counter-reset: numsection;
+      list-style-type: none;
+    }
+
+    ol.algorithm li {
+      margin: 0.5em 0;
+    }
+
+    ol.algorithm li:before {
+      font-weight: bold;
+      counter-increment: numsection;
+      content: counters(numsection, ".") ") ";
+    }
+
+    .supported {
+      background-color: #93c47d;
+    }
+
+    .missing {
+      background-color: #e06666;
+    }
+
+    table.simple {
+      border-collapse: collapse;
+      margin: 25px 0;
+      min-width: 400px;
+      border: 1px solid #dddddd;
+    }
+
+    table.simple thead tr {
+      background-color: #005a9c;
+      color: #ffffff;
+      text-align: left;
+    }
+
+    table.simple th,
+    table.simple td {
+      padding: 12px 15px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    table.simple tbody tr {
+      border-bottom: 1px solid #dddddd;
+    }
+
+    table.simple tbody tr:nth-of-type(even) {
+      background-color: #00000008;
+    }
+
+    table.simple tbody tr:last-of-type {
+      border-bottom: 2px solid #005a9c;
+    }
+  </style>
+</head>
+
+<body>
+  <section id='abstract'>
+    <p>
+      This specification defines mechanisms that can be used with the
+      [[[VC-DATA-MODEL-2.0]]] to increase a [=verifier|verifier's=]
+      confidence that a presenter of a [=verifable credential=] is, in
+      fact, appropriately related for its use. In the simplest
+      situation, this means the presenter is the original, legitimate
+      recipient of the credential. This specification defines a data
+      model for expressing confidence methods and evidence in a
+      [=verifiable credential=] and provides examples of how to use
+      it.
+    </p>
+  </section>
+
+  <section id='sotd'>
+    <p>
+      This is an experimental specification and is undergoing regular
+      revisions. It is
+      not fit for production deployment.
+    </p>
+  </section>
+
+  <section class="informative">
+    <h2>Introduction</h2>
+    <p>
+      Determining that a current presenter is the [=subject=] of a
+      [=Verifiable Credential=] is a key concern for verifiers.
+    </p>
+    <p>
+      This specification defines two extensible mechanisms that
+      [=Issuers=]
+      can use to help [=Verifiers=] increase their confidence that the
+      presentation of a given Verifiable Credential is legitimate.
+    </p>
+    <p>
+      The confidenceMethod property enables issuers to provide
+      specific
+      techniques for improving the confidence that a candidate party
+      is one of the subjects in a VC. For example, improving
+      confidence
+      that the presenter of a marriage license is one of the parties
+      involved: the officiant, one of the spouses, or one of the
+      witnesses.
+    </p>
+    <p>
+      The confidenceMethod property can be used to specify a
+      particular biometric, cryptographic key, or other mechanism that
+      the presenter can use to demonstrate that they are that subject
+      in the VC. It is up to the verifier to decide whether to require
+      the presenter to use the confidence method, or to use a
+      different mechanism to increase their confidence about whether,
+      for example, the presenter is the same entity the issuer made
+      claims about in the VC. Such a decision can impact the
+      verifier's liability when accepting VCs during certain use
+      cases.
+    </p>
+    <p>
+      The assuranceMethod property enables issuers to declare the
+      level of assurance that the issuer established before issuing
+      the
+      credential to its initial recipient. For example,
+      an issuer can declare that they used a particular identity
+      proofing process, signifying standard levels of assurance like
+      IAL 3 defined in [[NIST-SP-800-63-4]]. This can
+      help verifiers understand the level of assurance that
+      the issuer had at the time of issuance as an input for their own
+      informed decisions about whether to accept them.
+    </p>
+    <p>
+      Both of these mechanisms are extensible using JSON-LD to
+      define a new type of confidence method or assurance method.
+    </p>
+    <p>
+
+      For example, when an employer (the
+      [=issuer=]) issues a corporate identification card to an
+      employee (the
+      [=subject=]), it might require that the employee bind a
+      particular cryptographic
+      key (<a
+        data-cite="VC-DATA-INTEGRITY#dfn-verification-method">verification
+        method</a>) to the [=verifiable credential=] during the
+      issuing process. In that
+      case, the [=issuer=] can use this specification to convey to the
+      [=verifier=]
+      which cryptographic key was bound during the initial identity
+      assurance process.
+    </p>
+
+    <p>
+      In other words, an [=issuer=] can use this specification to
+      convey which
+      provable mechanisms it used to bind [=claims=] in a [=verifiable
+      credential=] so
+      that a [=verifier=] can increase their confidence in the truth
+      of a variety of
+      things, including the following:
+    </p>
+
+    <ul>
+      <li>
+        a particular identifier in the [=verifiable credential=]
+        refers to the same
+        [=subject=] the issuer intended it to refer to,
+      </li>
+      <li>
+        a [=subject=], such as the [=presentation|presenter=] of a
+        [=verifiable
+        credential=], is the same [=subject=] that the [=issuer=] made
+        [=claims=] about,
+      </li>
+      <li>
+        a [=subject=] [=controller|controls=], or has been designated
+        to use, one or
+        more mechanisms for demonstrating proof-of-possession of
+        cryptographic key
+        material,
+      </li>
+      <li>
+        a [=subject=] identified in the [=verifiable credential=] can
+        be checked against
+        a biometric.
+      </li>
+    </ul>
+
+
+    <section id="conformance">
       <p>
-This is an experimental specification and is undergoing regular revisions. It is
-not fit for production deployment.
+        A <dfn>conforming document</dfn> is any concrete expression of
+        the data model
+        that follows the relevant normative requirements in Section
+        <a href="#data-model"></a>.
+      </p>
+
+      <p>
+        A <dfn>conforming processor</dfn> is any algorithm realized as
+        software and/or
+        hardware that generates and/or consumes a [=conforming
+        document=]. Conforming
+        processors MUST produce errors when non-conforming documents
+        are consumed.
       </p>
     </section>
+  </section>
 
-    <section class="informative">
-      <h2>Introduction</h2>
-      <p>
-When a [=verifier=] performs the process of [=validate|validating=] a
-[=verifiable credential=], it is useful to be able to raise the confidence level
-that the [=subjects=] identified in a [=verifiable credential=] are the same
-ones that interacted with the [=issuer=] when it performed its vetting process
-to issue the [=verifiable credential=]. For example, when an employer (the
-[=issuer=]) issues a corporate identification card to an employee (the
-[=subject=]), it might require that the employee bind a particular cryptographic
-key (<a data-cite="VC-DATA-INTEGRITY#dfn-verification-method">verification
-method</a>) to the [=verifiable credential=] during the issuing process. In that
-case, the [=issuer=] can use this specification to convey to the [=verifier=]
-which cryptographic key was bound during the initial identity assurance process.
-      </p>
+  <section>
+    <h2>Data Model</h2>
+    <p>
+      This specification defines the `confidenceMethod` property for
+      expressing
+      confidence method information in a `credentialSubject` in a
+      [=verifiable
+      credential=].
+    </p>
 
-      <p>
-In other words, an [=issuer=] can use this specification to convey which
-provable mechanisms it used to bind [=claims=] in a [=verifiable credential=] so
-that a [=verifier=] can increase their confidence in the truth of a variety of
-things, including the following:
-      </p>
-
-      <ul>
-        <li>
-a particular identifier in the [=verifiable credential=] refers to the same
-[=subject=] the issuer intended it to refer to,
-        </li>
-        <li>
-a [=subject=], such as the [=presentation|presenter=] of a [=verifiable
-credential=], is the same [=subject=] that the [=issuer=] made [=claims=] about,
-        </li>
-        <li>
-a [=subject=] [=controller|controls=], or has been designated to use, one or
-more mechanisms for demonstrating proof-of-possession of cryptographic key
-material,
-        </li>
-        <li>
-a [=subject=] identified in the [=verifiable credential=] can be checked against
-a biometric.
-        </li>
-      </ul>
-
-      <section class="normative">
-        <h2>Terminology</h2>
-          <p>
-Terminology used throughout this document is defined in the
-<a data-cite="VC-DATA-MODEL-2.0#terminology">Terminology</a> section of the
-[[[VC-DATA-MODEL-2.0]]] and the [[[VC-DATA-INTEGRITY]]] specification.
-          </p>
-      </section>
-      <section id="conformance">
+    <dl>
+      <dt><dfn>confidenceMethod</dfn></dt>
+      <dd>
+      <dd>
         <p>
-A <dfn>conforming document</dfn> is any concrete expression of the data model
-that follows the relevant normative requirements in Section
-<a href="#data-model"></a>.
-        </p>
-
+          If present, the value of the `confidenceMethod` property is
+          one or more
+          confidence methods as defined below. Each confidence method
+          specifies the specific
+          type of confidence method and any reference data that might
+          be required to evaluate the method. The method is bound to a
+          [=subject=]
+          in the [=verifiable credential=] and provides enough
+          information for a
+          [=verifier=] to evaluate whether a particular candidate
+          party is, for their purposes, the same entity referenced in
+          the credential. THe verifier evaluates the confidence
+          method, executing the process of that method. Successful
+          evaluation indicates the credential has satisfied the
+          confidence method and the verifier can safely rely on that
+          belief to provide services. </p>
         <p>
-A <dfn>conforming processor</dfn> is any algorithm realized as software and/or
-hardware that generates and/or consumes a [=conforming document=]. Conforming
-processors MUST produce errors when non-conforming documents are consumed.
+          Each confidence method MUST specify its `type` and MAY
+          specify an `id`. The precise properties and semantics of
+          each confidence method are determined by the
+          specific `confidenceMethod` type definition.
         </p>
-      </section>
-    </section>
+      </dd>
+      <dt><dfn>assuranceMethod</dfn></dt>
+      <dd>
+        <p>If present, the value of the `assuranceMethod` property is
+          one or more assurance methods, defined below. Each assurance
+          method specifies the specific type of assurance method and
+          any reference data that might be required to evaluate the
+          method. The method is bound to a [=subject=] in the
+          [=verifiable credential=] and provides information about the
+          level of assurance that the issuer had about the subject at
+          the time of issuance. This can help a [=verifier=]
+          understand the means by which the verifier established their
+          own level of assurance that for that subject. Different
+          subjects may have different assurance method, allowing the
+          issuer to use different levels of assurance for different
+          subjects in the same credential. For example, an issuer can
+          use a high level of assurance for the subject that is the
+          officiant or spouse in a marriage license, but a lower level
+          of assurance for the witnesses to that ceremony. </p>
+        </p>
+        <p>
+          Each assurance method MUST specify its `type` and MAY
+          specify an `id`. The precise properties and semantics of
+          each assurance method are determined by the
+          specific `assuranceMethod` type definition.
+        </p>
+      </dd>
+    </dl>
+    <p>
+      A [=verifier=] can decide to accept [=claims=] in a [=verifiable
+      credential=]
+      without requiring use of the confidence method, or use a
+      different mechanism to
+      increase their confidence about whether, for example, the
+      [=holder=] is the same
+      entity the issuer made [=claims=] about in the [=verifiable
+      credential=]. Such a
+      decision can impact the [=verifier=]'s liability when accepting
+      [=verifiable credentials=] during certain use cases.
+    </p>
 
-    <section>
-      <h2>Data Model</h2>
-      <p>
-This specification defines the `confidenceMethod` property for expressing
-confidence method information in a `credentialSubject` in a [=verifiable
-credential=].
-      </p>
+    <p>
+      A [=verifier=] can validate that the [=holder=] controls, or has
+      been designated
+      the ability to use, a confidence method by verifying the [=data
+      integrity
+      proof|proof=] of the <a>verifiable presentation</a> using the
+      information in the
+      confidence method. The confidence method can include the
+      verification key, or
+      the type of the confidence method can define that the
+      verification key is to be
+      inferred from other properties in the [=verifiable credential=],
+      such as the
+      `credentialSubject.id`.
+    </p>
 
-      <dl>
-        <dt><dfn>confidenceMethod</dfn></dt>
-        <dd>
-        <dd>
-          <p>
-If present, the value of the `confidenceMethod` property is one or more
-confidence methods. Each confidence method is bound to one or more [=subjects=]
-in the [=verifiable credential=], and provides enough information for a
-[=verifier=] to determine whether the [=holder=] can generate a [=verifiable
-presentation=] to increase the [=verifier's=] confidence that they are the same
-entity referenced by the confidence method. This is referred to as satisfying
-the confidence method. It is required that the [=issuer=] verifies that the
-[=holder=] can satisfy each `confidenceMethod` the [=issuer=] includes in the
-[=claims=] of the [=verifiable credential=]s they issue.
-          </p>
-          <p>
-Each confidence method MUST specify its `type` and MAY specify an `id`. The
-precise properties and semantics of each confidence method are determined by the
-specific `confidenceMethod` type definition.
-          </p>
-        </dd>
-      </dl>
+    <p>
+      The following example demonstrates the various types of
+      confidence methods
+      that can be used, including public cryptographic keys,
+      verification methods,
+      and Decentralized Identifier Documents.
+    </p>
 
-      <p>
-A [=verifier=] can decide to accept [=claims=] in a [=verifiable credential=]
-without requiring use of the confidence method, or use a different mechanism to
-increase their confidence about whether, for example, the [=holder=] is the same
-entity the issuer made [=claims=] about in the [=verifiable credential=]. Such a
-decision can impact the [=verifier=]'s liability when accepting
-[=verifiable credentials=] during certain use cases.
-      </p>
-
-      <p>
-A [=verifier=] can validate that the [=holder=] controls, or has been designated
-the ability to use, a confidence method by verifying the [=data integrity
-proof|proof=] of the <a>verifiable presentation</a> using the information in the
-confidence method. The confidence method can include the verification key, or
-the type of the confidence method can define that the verification key is to be
-inferred from other properties in the [=verifiable credential=], such as the
-`credentialSubject.id`.
-      </p>
-
-      <p>
-The following example demonstrates the various types of confidence methods
-that can be used, including public cryptographic keys, verification methods,
-and Decentralized Identifier Documents.
-      </p>
-
-      <pre class="example nohighlight"
-        title="Usage of the confirmationMethod property of type VerificationKeyConfirmation">
+    <pre class="example nohighlight"
+      title="Usage of the confirmationMethod property of type VerificationKeyConfirmation">
   {
     "@context": [
       "https://www.w3.org/ns/credentials/v2",
@@ -312,55 +471,150 @@ and Decentralized Identifier Documents.
   }
           </pre>
 
-      <p class="note">
-A confidence method can express various metadata such as the [=issuer=]'s level
-of confidence that the [=holder=] is the [=subject=] of the [=verifiable
-credential=], specific form factors or mechanisms of authenticators, and/or
-references to other [=verifiable credentials=] or versioned trust frameworks.
-For example, an [=issuer=] can make a [=claim=] about a confidence method that
-is based on a cryptographic key pair, but to produce a signature using that key,
-the [=holder=] has to unlock a device using multi-factor authentication.
-      </p>
+    <p class="note">
+      A confidence method can express various metadata such as the
+      [=issuer=]'s level
+      of confidence that the [=holder=] is the [=subject=] of the
+      [=verifiable
+      credential=], specific form factors or mechanisms of
+      authenticators, and/or
+      references to other [=verifiable credentials=] or versioned
+      trust frameworks.
+      For example, an [=issuer=] can make a [=claim=] about a
+      confidence method that
+      is based on a cryptographic key pair, but to produce a signature
+      using that key,
+      the [=holder=] has to unlock a device using multi-factor
+      authentication.
+    </p>
 
-    </section>
-
+  </section>
+  <section>
+    <h2>Confidence Methods</h2>
+    <dl>
+      <dt><dfn>VerificationConfidence</dfn></dt>
+      <dd>
+        <p>
+          VerificationConfidence specifies how to use a verification
+          method in a controlled identifier document such as a DID
+          document.
+        </p>
+      </dd>
+      <dt><dfn>BiometricImageConfidence</dfn></dt>
+      <dd>
+        <p>
+          BiometricImageConfidence specifies how to use an image
+          in a verifiable credential for recognizing the subject of
+          the credential.
+        </p>
+      </dd>
+    </dl>
     <section>
-      <h2>Security Considerations</h2>
-      <div class="issue" title="Add Security Considerations section">
-Add security considerations section that includes at least the following topics:
-        <ul>
-          <li>
-Since confidence methods can be selectively disclosed, verifiers need to
-explicitly ask for confidence methods in high-assurance use cases when
-dealing with proof mechanisms that allow for selective or unlinkable disclosure.
-          </li>
-        </ul>
-      </div>
+      <h3>Verification Confidence</h3>
+      <p>TBD</p>
     </section>
-
     <section>
-      <h2>Privacy Considerations</h2>
-      <div class="issue" title="Add Privacy Considerations section">
-Add privacy considerations section that includes at least the following topics:
-        <ul>
-          <li>
-Confidence methods are expected to be selectively disclosed, as they might not
-be necessary in many low-assurance use cases, or where high-assurance is
-achieved through a different means such as in-person verification against a
-photo.
-          </li>
-          <li>
-If a confidence method is unlinkably disclosed, it can reveal
-correlatable identifiers, such as public cryptographic key identifiers.
-          </li>
-          <li>
-Strongly advise against using biometrics for confidence methods unless
-absolutely required. Warn that verifiers should only require biometric photos
-as a last resort and should destroy the information after the transaction
-is complete.
-          </li>
-        </ul>
-      </div>
+      <h3>Biometric Image Confidence</h3>
+      <p>TBD</p>
     </section>
-  </body>
+  </section>
+  <section>
+    <h2>Assurance Methods</h2>
+    <dl>
+      <dt><dfn>NIST_800-63-4_LOA</dfn></dt>
+      <dd>
+        <p>NIST_800-63-4 defines an assurance method based on the
+          [[NIST-SP-800-63-4]] specification.</p>
+      </dd>
+      <dt><dfn>EIDAS_LOA</dfn></dt>
+      <dd>
+        <p>EIDAS_LOA defines an assurance method based on the
+          [[EIDAS2]].</p>
+      </dd>
+    </dl>
+    <section>
+      <h3>NIST_800-63-3_LOA</h3>
+      <p>TBD</p>
+    </section>
+    <section>
+      <h3>EIDAS_LOA</h3>
+      <p>TBD</p>
+    </section>
+  </section>
+  <section class="normative">
+    <h2>Terminology</h2>
+    <p>
+      Some terminology used throughout this document is defined in the
+      <a data-cite="VC-DATA-MODEL-2.0#terminology">Terminology</a>
+      section of the [[[VC-DATA-MODEL-2.0]]] specification as well as
+      the
+      <a data-cite="CID#terminology">Terminology</a> section of the
+      [[[CID]]] specification. This section defines addition terms
+      used
+      throughout this specification.
+    </p>
+
+    <dl class="termlist definitions" data-sort="ascending">
+      <dt><dfn class="export">assurance method</dfn></dt>
+      <dd>
+        A technique for establishing the identity of an individual in
+        terms of real-world evidence and observations, according to a
+        specific process, typically defined by national and
+        international standards organizations like NIST in the US and
+        eIDAS in the EU.
+      </dd>
+  </section>
+  <section>
+    <h2>Security Considerations</h2>
+    <div class="issue" title="Add Security Considerations section">
+      Add security considerations section that includes at least the
+      following topics:
+      <ul>
+        <li>
+          Since confidence methods can be selectively disclosed,
+          verifiers need to
+          explicitly ask for confidence methods in high-assurance use
+          cases when
+          dealing with proof mechanisms that allow for selective or
+          unlinkable disclosure.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Privacy Considerations</h2>
+    <div class="issue" title="Add Privacy Considerations section">
+      Add privacy considerations section that includes at least the
+      following topics:
+      <ul>
+        <li>
+          Confidence methods are expected to be selectively disclosed,
+          as they might not
+          be necessary in many low-assurance use cases, or where
+          high-assurance is
+          achieved through a different means such as in-person
+          verification against a
+          photo.
+        </li>
+        <li>
+          If a confidence method is unlinkably disclosed, it can
+          reveal
+          correlatable identifiers, such as public cryptographic key
+          identifiers.
+        </li>
+        <li>
+          Strongly advise against using biometrics for confidence
+          methods unless
+          absolutely required. Warn that verifiers should only require
+          biometric photos
+          as a last resort and should destroy the information after
+          the transaction
+          is complete.
+        </li>
+      </ul>
+    </div>
+  </section>
+</body>
+
 </html>
