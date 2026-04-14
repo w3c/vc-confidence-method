@@ -185,7 +185,8 @@
     <p>
       This specification defines mechanisms that can be used with the
       [[[VC-DATA-MODEL-2.0]]] to increase a [=verifier|verifier's=]
-      confidence that a presenter of a [=verifiable credential=] is, in
+      confidence that a presenter of a [=verifiable credential=] is,
+      in
       fact, appropriately related for its use. In the simplest
       situation, this means the presenter is the original, legitimate
       recipient of the credential. This specification defines a data
@@ -203,7 +204,7 @@
     </p>
   </section>
 
-  <section class="informative">
+  <section id="introduction" class="informative">
     <h2>Introduction</h2>
     <p>
       Determining that a current presenter is the [=subject=] of a
@@ -238,7 +239,7 @@
       cases.
     </p>
     <p>
-      The assuranceMethod property enables issuers to declare the
+      The assuranceLevel property enables issuers to declare the
       level of assurance that the issuer established before issuing
       the
       credential to its initial recipient. For example,
@@ -251,7 +252,7 @@
     </p>
     <p>
       Both of these mechanisms are extensible using JSON-LD to
-      define a new type of confidence method or assurance method.
+      define a new type of confidence method or assurance level.
     </p>
     <p>
 
@@ -305,25 +306,154 @@
         a biometric.
       </li>
     </ul>
+  </section>
+  <section id="conformance">
+    <p>
+      A <dfn>conforming document</dfn> is any concrete expression of
+      the data model
+      that follows the relevant normative requirements in Section
+      <a href="#data-model"></a>.
+    </p>
 
+    <p>
+      A <dfn>conforming processor</dfn> is any algorithm realized as
+      software and/or
+      hardware that generates and/or consumes a [=conforming
+      document=]. Conforming
+      processors MUST produce errors when non-conforming documents
+      are consumed.
+    </p>
+  </section>
+  <section id="evidence" class="informative">
+    <h1>Relation to the <a>evidence</a> property</h1>
+    <p>The Verifiable Credentials specification defines an
+      <a>evidence</a> property:
+    </p>
+    <blockquote>
+      Evidence can be included by an issuer to provide the verifier
+      with
+      additional supporting information in a verifiable credential.
+      This
+      could be used by the verifier to establish the confidence with
+      which
+      it relies on the claims in the verifiable credential. For
+      example, an
+      issuer could check physical documentation provided by the
+      subject or
+      perform a set of background checks before issuing the
+      credential. In
+      certain scenarios, this information is useful to the verifier
+      when
+      determining the risk associated with relying on a given
+      credential.
+    </blockquote>
 
-    <section id="conformance">
-      <p>
-        A <dfn>conforming document</dfn> is any concrete expression of
-        the data model
-        that follows the relevant normative requirements in Section
-        <a href="#data-model"></a>.
-      </p>
-
-      <p>
-        A <dfn>conforming processor</dfn> is any algorithm realized as
-        software and/or
-        hardware that generates and/or consumes a [=conforming
-        document=]. Conforming
-        processors MUST produce errors when non-conforming documents
-        are consumed.
-      </p>
-    </section>
+    <p>
+      This property is expected to be used at the top level of the
+      credential, effectively providing "supporting information" for
+      the entire credential.
+    </p>
+    <p>
+      The example provided in the specification illustrates how this
+      might be used:
+    <pre class="example nohighlight"
+      title="Example of evidence supporting a skill achievement credential">
+              {
+                ...
+                "evidence": [{
+                    <span class='comment'>// url to an externally hosted evidence file/artifact</span>
+                    "id": "https://videos.example/training/alice-espresso.mp4",
+                    "type": ["Evidence"],
+                    "name": "Talk-aloud video of double espresso preparation",
+                    "description": "This is a talk-aloud video of Alice demonstrating preparation of a double espresso drink.",
+                    <span class='comment'>// digest hash of the mp4 video file</span>
+                    "digestMultibase": "uELq9FnJ5YLa5iAszyJ518bXcnlc5P7xp1u-5uJRDYKvc"
+                  }
+                ]
+              }
+            </pre>
+    </p>
+    <p>This example is accompanied by the following note:
+    <p class="note"
+      title="Evidence has a different purpose from securing mechanisms">
+      The `evidence` [=property=] provides information that is
+      different
+      from and
+      information to the securing mechanism used. The `evidence`
+      [=property=] is
+      used to express supporting information, such as documentary
+      evidence, related to
+      the [=verifiable credential=]. In contrast, the securing
+      mechanism
+      is used to
+      express machine-verifiable mathematical proofs related to the
+      authenticity of
+      the [=issuer=] and integrity of the [=verifiable credential=].
+      For
+      more
+      information about securing mechanisms, see Section
+      [[[#securing-mechanisms]]].
+    </p>
+    <p>As demonstrated, the evidence property is expected to provide
+      evidence, such as the mp4 video file in the example.
+    </p>
+    <p>This specification presents two additional measures that
+      provide mechanisms for increasing the verifier's confidence in
+      specific subjects without revealing unnecessary personal
+      information. Rather than provide additional "evidence", the additional properties of
+      <a>confidenceMethod</a> and <a>assuranceLevel</a> provide
+      distinct attestations from the issuer:
+      <style>
+        .property-comparison {
+          border-collapse: collapse;
+          margin: 25px 0;
+          min-width: 400px;
+          border: 1px solid #dddddd;
+        }
+        .property-comparison td,
+        .property-comparison th {
+          padding: 12px 15px;
+          vertical-align: top;
+          border: 1px solid #dddddd;
+        }
+      </style>
+    <table class="property-comparison">
+      <tr>
+        <th><a>evidence</a></th>
+        <td>A top-level property, this presents evidence
+          independently evaluatable by the verifier without further
+          interaction with either the issuer or the holder. For
+          example, the issuer might provide a video of the subject
+          performing some specific action such as performing a task.
+        </td>
+      </tr>
+      <tr>
+        <th><a>confidenceMethod</a></th>
+        <td>A subject-level property, this defines mechanisms the
+          <a>verifier</a> can use to increase the confidence that a
+          <a>subject</a> of the VC is also the subject of another
+          interaction. For example, the <a>issuer</a> might provide
+          a <a>verification method</a>, such as a public key, by
+          which the verifier could apply a proof-of-use protocol to
+          establish that a current user has the ability to sign
+          cryptographic challenges using the same cryptographic
+          secrets believed by the issuer to be under the control of
+          the subject. This is sometimes called "proof-of-control".
+        </td>
+      </tr>
+      <tr>
+        <th><a>assuranceLevel</a></th>
+        <td>A subject-level property, this allows <a>issuers</a> to
+          attest to having established a known Assurance Level
+          according to public standards such as NIST-SP-800-63-4 and
+          EIDAS2. Rather than providing evidence to be evaluated or
+          a mechanism to be applied, this property simply describes
+          the issuers own processes for identifying the subject
+          before issuing the credential.</td>
+      </tr>
+    </table>
+    </p>
+    </p>
   </section>
 
   <section>
@@ -364,11 +494,11 @@
           specific `confidenceMethod` type definition.
         </p>
       </dd>
-      <dt><dfn>assuranceMethod</dfn></dt>
+      <dt><dfn>assuranceLevel</dfn></dt>
       <dd>
-        <p>If present, the value of the `assuranceMethod` property is
-          one or more assurance methods, defined below. Each assurance
-          method specifies the specific type of assurance method and
+        <p>If present, the value of the `assuranceLevel` property is
+          one or more assurance levels, defined below. Each assurance
+          method specifies the specific type of assurance level and
           any reference data that might be required to evaluate the
           method. The method is bound to a [=subject=] in the
           [=verifiable credential=] and provides information about the
@@ -376,7 +506,7 @@
           the time of issuance. This can help a [=verifier=]
           understand the means by which the verifier established their
           own level of assurance that for that subject. Different
-          subjects may have different assurance method, allowing the
+          subjects may have different assurance level, allowing the
           issuer to use different levels of assurance for different
           subjects in the same credential. For example, an issuer can
           use a high level of assurance for the subject that is the
@@ -384,10 +514,10 @@
           of assurance for the witnesses to that ceremony. </p>
         </p>
         <p>
-          Each assurance method MUST specify its `type` and MAY
+          Each assurance level MUST specify its `type` and MAY
           specify an `id`. The precise properties and semantics of
-          each assurance method are determined by the
-          specific `assuranceMethod` type definition.
+          each assurance level are determined by the
+          specific `assuranceLevel` type definition.
         </p>
       </dd>
     </dl>
@@ -519,16 +649,16 @@
     </section>
   </section>
   <section>
-    <h2>Assurance Methods</h2>
+    <h2>Assurance Levels</h2>
     <dl>
       <dt><dfn>NIST_800-63-4_LOA</dfn></dt>
       <dd>
-        <p>NIST_800-63-4 defines an assurance method based on the
+        <p>NIST_800-63-4 defines an assurance level based on the
           [[NIST-SP-800-63-4]] specification.</p>
       </dd>
       <dt><dfn>EIDAS_LOA</dfn></dt>
       <dd>
-        <p>EIDAS_LOA defines an assurance method based on the
+        <p>EIDAS_LOA defines an assurance level based on the
           [[EIDAS2]].</p>
       </dd>
     </dl>
@@ -555,7 +685,7 @@
     </p>
 
     <dl class="termlist definitions" data-sort="ascending">
-      <dt><dfn class="export">assurance method</dfn></dt>
+      <dt><dfn class="export">assurance level</dfn></dt>
       <dd>
         A technique for establishing the identity of an individual in
         terms of real-world evidence and observations, according to a
