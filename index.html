@@ -512,11 +512,11 @@ confidence method that includes a service endpoint:
 }
 </pre>
       <p>
-The wallet reads the service property, presents the option to the
-[=holder=], and upon consent, transmits the biometricVectors and a fresh
-biometric capture to the serviceEndpoint. The service compares the
+The wallet reads the `service` property, presents the option to the
+[=holder=], and upon consent, transmits the `biometricVectors` and a fresh
+biometric capture to the `serviceEndpoint`. The service compares the
 fresh capture against the enrolled vectors and returns a signed
-BiometricVerificationCredential:
+`BiometricVerificationCredential`:
 </p>
       <pre class="example" title="Verification output for user-selected provider biometric match">
 {
