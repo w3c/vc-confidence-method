@@ -616,6 +616,249 @@ method</a>, such as a public key, by
       authentication.
     </p>
 
+<section>
+    <h3>Biometric Vector Confidence Method</h3>
+<p>
+A <dfn>BiometricVectorConfidenceMethod</dfn> enables an [=issuer=] to embed
+biometric vectors in a [=verifiable credential=] so that a [=verifier=] can
+increase their confidence that the [=presentation|presenter=] is the same
+individual the [=issuer=] made [=claims=] about. Unlike raw biometric data
+(e.g., photos, audio recordings), biometric <em>vectors</em> are compact
+mathematical representations produced by a matching model. Vectors from
+different models are not interchangeable.
+</p>
+<p>
+A biometric vector confidence method MUST specify the following properties:
+</p>
+<dl>
+<dt>id</dt>
+<dd>
+A unique identifier for this confidence method instance. Enables a person to
+maintain multiple biometric enrollments for different contexts.
+</dd>
+<dt>type</dt>
+<dd>
+The value MUST be BiometricVectorConfidenceMethod.
+</dd>
+<dt>biometricType</dt>
+<dd>
+The biometric modality. Expected values include face, voice, fingerprint,
+palmprint, iris, and retina.
+</dd>
+<dt>inputType</dt>
+<dd>
+The capture format. Expected values include video, static-image,
+image-sequence, and audio.
+</dd>
+<dt>biometricModel</dt>
+<dd>
+An object identifying the matching model, containing a type property
+(MUST be BiometricMatchingModel) and a matchingModel property
+(vendor and model identifier, e.g., realeyes-2026-v3.2).
+</dd>
+<dt>biometricVectors</dt>
+<dd>
+Multibase-encoded (base64url-nopad) biometric vector. The format is specific
+to the matching model that generated it.
+</dd>
+</dl>
+<p>
+A biometric vector confidence method MAY also specify:
+</p>
+<dl>
+<dt>service</dt>
+<dd>
+A service endpoint for server-assisted verification, following the service
+definition structure from [[DID-CORE]], containing id, type
+(BiometricVerificationService), and serviceEndpoint properties.
+</dd>
+</dl>
+<p>
+Two implementation scenarios are supported: client-side local processing
+and user-selected provider. In both cases, a fresh biometric sample is
+captured and compared against the enrolled vectors. The result is expressed
+as a BiometricVerificationCredential.
+</p>
+<section>
+<h4>Client-Side Verification</h4>
+  <p>
+In this scenario, biometric verification happens entirely on the
+[=holder=]'s device. No biometric data leaves the device; a zero-knowledge
+proof demonstrates the match.
+</p>
+<p>
+The following example demonstrates a credential with a biometric vector
+confidence method for client-side verification:
+</p>
+<pre class="example" title="Client-side biometric vector confidence method">
+{
+"@context": [
+"https://www.w3.org/ns/credentials/v2",
+"https://www.w3.org/ns/credentials/examples/v2"
+],
+"id": "http://example.edu/credentials/3732",
+"type": ["VerifiableCredential", "UniversityDegreeCredential"],
+"issuer": "https://example.edu/issuers/14",
+"validFrom": "2026-01-01T00:00:00Z",
+"credentialSubject": {
+"id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+"confidenceMethod": {
+"id": "urn:uuid:a7f8c3d1-4b2e-4f9a-8c6d-1e3b5a7f9c2d",
+"type": "BiometricVectorConfidenceMethod",
+"biometricType": "face",
+"inputType": "video",
+"biometricModel": {
+"type": "BiometricMatchingModel",
+"matchingModel": "realeyes-2026-v3.2"
+},
+"biometricVectors": "uAVvLMv6gm...MNam"
+},
+"degree": {
+"type": "BachelorDegree",
+"name": "Bachelor of Science"
+}
+}
+}
+</pre>
+  <p>
+The [=holder=]'s device captures a fresh biometric sample, compares it
+locally against the enrolled biometricVectors, and produces a
+BiometricVerificationCredential asserting the match:
+</p>
+<pre class="example" title="Verification output for client-side biometric match">
+{
+"@context": [
+"https://www.w3.org/ns/credentials/v2",
+"https://www.w3.org/ns/credentials/examples/v2"
+],
+"type": ["VerifiableCredential", "BiometricVerificationCredential"],
+"issuer": "did:example:holder-device",
+"validFrom": "2026-05-15T14:30:00Z",
+"validUntil": "2026-05-15T14:45:00Z",
+"credentialSubject": {
+"id": "urn:uuid:a7f8c3d1-4b2e-4f9a-8c6d-1e3b5a7f9c2d",
+"biometricMatch": {
+"type": "BiometricMatch",
+"matchingMethod": "client-side-zkp",
+"matchDate": "2026-05-15T14:30:00Z",
+"matchResult": "verified",
+"confidence": "0.96"
+}
+},
+"proof": {
+"type": "DataIntegrityProof",
+"cryptosuite": "biometric-zkp-2026",
+"created": "2026-05-15T14:30:05Z",
+"verificationMethod": "did:example:holder-device#key-1",
+"proofPurpose": "authentication",
+"proofValue": "z58DAdFfa9SkqZMVPxAQpic7ndTeel..."
+}
+}
+</pre>
+</section>
+<section>
+<h4>User-Selected Provider</h4>
+  <p>
+In this scenario, the [=holder=] selects a trusted biometric verification
+service. The wallet presents available options and the [=holder=] consents
+before any biometric data is transmitted. The [=holder=]'s biometric data is
+sent only to their chosen provider, not to the [=verifier=].
+</p>
+<p>
+The following example demonstrates a credential with a biometric vector
+confidence method that includes a service endpoint:
+</p>
+<pre class="example" title="User-selected provider biometric vector confidence method">
+{
+"@context": [
+"https://www.w3.org/ns/credentials/v2",
+"https://www.w3.org/ns/credentials/examples/v2"
+],
+"id": "http://example.edu/credentials/3732",
+"type": ["VerifiableCredential", "UniversityDegreeCredential"],
+"issuer": "https://example.edu/issuers/14",
+"validFrom": "2026-01-01T00:00:00Z",
+"credentialSubject": {
+"id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+"confidenceMethod": {
+"id": "urn:uuid:a7f8c3d1-4b2e-4f9a-8c6d-1e3b5a7f9c2d",
+"type": "BiometricVectorConfidenceMethod",
+"biometricType": "face",
+"inputType": "video",
+"biometricModel": {
+"type": "BiometricMatchingModel",
+"matchingModel": "realeyes-2026-v3.2"
+},
+"service": {
+"id": "urn:uuid:service-1",
+"type": "BiometricVerificationService",
+"serviceEndpoint": "https://api.realeyesit.com/verify/v3"
+},
+"biometricVectors": "uAVvLMv6gm...MNam"
+},
+"degree": {
+"type": "BachelorDegree",
+"name": "Bachelor of Science"
+}
+}
+}
+</pre>
+  <p>
+The verification flow ensures that the biometric provider and [=verifier=]
+do not need to know about each other:
+</p>
+  <ol>
+    <li>The [=verifier=] requests biometric verification from the
+[=holder=], specifying accepted biometric providers and a challenge nonce.</li>
+<li>The wallet presents the accepted providers to the [=holder=],
+who selects their preferred provider and consents to the verification.</li>
+<li>The wallet transmits the biometricVectors, a fresh
+biometric capture, and the challenge nonce to the selected provider's
+serviceEndpoint.</li>
+<li>The provider compares the fresh capture against the enrolled
+vectors and issues a signed BiometricVerificationCredential
+with the challenge nonce embedded.</li>
+<li>The wallet presents the BiometricVerificationCredential
+to the [=verifier=], who validates the proof and checks the embedded challenge
+matches their original request.</li>
+</ol>
+  <p>
+The challenge nonce prevents replay attacks and proves the verification
+was performed in response to the [=verifier=]'s specific request:
+</p>
+<pre class="example" title="Verification output for user-selected provider biometric match">
+{
+"@context": [
+"https://www.w3.org/ns/credentials/v2",
+"https://www.w3.org/ns/credentials/examples/v2"
+],
+"type": ["VerifiableCredential", "BiometricVerificationCredential"],
+"issuer": "did:web:realeyesit.com",
+"validFrom": "2026-05-15T14:30:00Z",
+"validUntil": "2026-05-15T14:45:00Z",
+"credentialSubject": {
+"id": "urn:uuid:a7f8c3d1-4b2e-4f9a-8c6d-1e3b5a7f9c2d",
+"biometricMatch": {
+"type": "BiometricMatch",
+"matchingMethod": "server-assisted-video-stream",
+"matchDate": "2026-05-15T14:30:00Z",
+"domain": "https://verifier.example/",
+"matchResult": "verified",
+"confidence": "0.94"
+}
+},
+"proof": {
+"type": "DataIntegrityProof",
+"cryptosuite": "ecdsa-rdfc-2019",
+"created": "2026-05-15T14:30:05Z",
+"verificationMethod": "did:web:realeyesit.com#key-1",
+"proofPurpose": "assertionMethod",
+"proofValue": "z58DAdFfa9SkqZMVPxAQpic7ndTeel..."
+}
+}
+</pre>
+</section>
+  </section>
   </section>
   <section>
     <h2>Confidence Methods</h2>
