@@ -755,7 +755,10 @@ method</a>, such as a public key, by
         <p>
           The [=holder=]'s device captures a fresh biometric sample, compares it
           locally against the enrolled `biometricVectors`, and produces a
-          `BiometricVerificationCredential` asserting the match:
+          `BiometricVerificationCredential` asserting the match. Note that the
+          `credentialSubject.id` in the verification output references the
+          confidence method `id` from the credential above, linking the
+          verification result to the specific biometric enrollment:
         </p>
         <pre class="example" title="Verification output for client-side biometric match">
   {
@@ -777,7 +780,7 @@ method</a>, such as a public key, by
         "confidence": "0.96"
       }
     },
-"proof": {
+    "proof": {
       "type": "DataIntegrityProof",
       "cryptosuite": "example-biometric-zkp-2028",
       "created": "2026-05-15T14:30:05Z",
@@ -787,7 +790,7 @@ method</a>, such as a public key, by
     }
   }
         </pre>
-        <p class="note">
+        <p class="issue atrisk">
           The `example-biometric-zkp-2028` cryptosuite does not exist at the
           time of this writing. It is included here to illustrate how a future
           zero-knowledge proof cryptosuite could be used for client-side
@@ -865,7 +868,10 @@ method</a>, such as a public key, by
         </ol>
         <p>
           The challenge nonce prevents replay attacks and proves the verification
-          was performed in response to the [=verifier=]'s specific request:
+          was performed in response to the [=verifier=]'s specific request.
+          As with the client-side scenario, the `credentialSubject.id` in the
+          verification output references the confidence method `id` from the
+          credential above:
         </p>
         <pre class="example" title="Verification output for user-selected provider biometric match">
   {
@@ -900,7 +906,6 @@ method</a>, such as a public key, by
         </pre>
       </section>
     </section>
-  </section>
 
   <section>
     <h2>Assurance Levels</h2>
