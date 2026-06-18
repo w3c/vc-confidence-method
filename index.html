@@ -649,6 +649,20 @@ method</a>, such as a public key, by
     <section>
       <h3>Biometric Vector Confidence Method</h3>
       <p>
+      <p class="issue atrisk" title="This feature is unstable and continues to be refined by the Task Force">
+The Biometric Vector Confidence Method is unstable and continues to be refined by the Task Force. The following concerns are actively being worked on at present: <br>
+1) The specification needs to be agnostic to biometric matching providers and not favor any particular proprietary or open approach/types. <br>
+2) Model/vector data might be combined since they are associated with one another. It doesn't really make sense to decouple the model and the vector information. base64url encoded CBOR might be a better approach to hold this information.<br>
+3) How do we specify examples with open matching models, which need to exist in the spec.<br>
+4) Clarify that the issuer can provide multiple vectors from different providers when the credential is issued.<br>
+5) There is no standardized ZKP to do biometric matching yet, but the group believes that is the ideal end-state.<br>
+6) Issuers putting service URLs into the biometric matching model might not be the best design and will need to be refined. More work will need to be done to figure out how the negotiation is performed between the holder and the verifier, and the holder and the issuer.<br>
+7) Where should this information be published? Is it safe to put this in the DID Document?<br>
+8) Describe "ideal state" use cases in the specification.<br>
+9) How do holder's find "the right" biometric provider? Is it asking too much of the holder? Is that a security/privacy risk? How much are we asking holder's to do?<br>
+10) Do application integrity checks need to be performed for local device checks?<br>
+11) Nonces need to be added to the model.<br>
+      </p>
         A <dfn>BiometricVectorConfidenceMethod</dfn> enables an [=issuer=] to embed
         biometric <em>vectors</em> in a [=verifiable credential=] so that a
         [=verifier=] can increase their confidence that the
