@@ -648,21 +648,44 @@ method</a>, such as a public key, by
     </section>
     <section>
       <h3>Biometric Vector Confidence Method</h3>
+
+      <div class="issue atrisk"
+        title="Biometric Vector Confidence Method is unstable">
+        The Biometric Vector Confidence Method is unstable and continues to
+        be refined by the Task Force. The following concerns are actively
+        being worked on at present:
+        <ol>
+          <li>The specification needs to be agnostic to biometric matching
+            providers and not favor any particular proprietary or open
+            approach/types.</li>
+          <li>Model/vector data might be combined since they are associated
+            with one another. It doesn't really make sense to decouple the
+            model and the vector information. base64url encoded CBOR might
+            be a better approach to hold this information.</li>
+          <li>How do we specify examples with open matching models, which
+            need to exist in the spec.</li>
+          <li>Clarify that the issuer can provide multiple vectors from
+            different providers when the credential is issued.</li>
+          <li>There is no standardized ZKP to do biometric matching yet,
+            but the group believes that is the ideal end-state.</li>
+          <li>Issuers putting service URLs into the biometric matching model
+            might not be the best design and will need to be refined. More
+            work will need to be done to figure out how the negotiation is
+            performed between the holder and the verifier, and the holder
+            and the issuer.</li>
+          <li>Where should this information be published? Is it safe to put
+            this in the DID Document?</li>
+          <li>Describe "ideal state" use cases in the specification.</li>
+          <li>How do holder's find "the right" biometric provider? Is it
+            asking too much of the holder? Is that a security/privacy risk?
+            How much are we asking holder's to do?</li>
+          <li>Do application integrity checks need to be performed for local
+            device checks?</li>
+          <li>Nonces need to be added to the model.</li>
+        </ol>
+      </div>
+
       <p>
-      <p class="issue atrisk" title="This feature is unstable and continues to be refined by the Task Force">
-The Biometric Vector Confidence Method is unstable and continues to be refined by the Task Force. The following concerns are actively being worked on at present: <br>
-1) The specification needs to be agnostic to biometric matching providers and not favor any particular proprietary or open approach/types. <br>
-2) Model/vector data might be combined since they are associated with one another. It doesn't really make sense to decouple the model and the vector information. base64url encoded CBOR might be a better approach to hold this information.<br>
-3) How do we specify examples with open matching models, which need to exist in the spec.<br>
-4) Clarify that the issuer can provide multiple vectors from different providers when the credential is issued.<br>
-5) There is no standardized ZKP to do biometric matching yet, but the group believes that is the ideal end-state.<br>
-6) Issuers putting service URLs into the biometric matching model might not be the best design and will need to be refined. More work will need to be done to figure out how the negotiation is performed between the holder and the verifier, and the holder and the issuer.<br>
-7) Where should this information be published? Is it safe to put this in the DID Document?<br>
-8) Describe "ideal state" use cases in the specification.<br>
-9) How do holder's find "the right" biometric provider? Is it asking too much of the holder? Is that a security/privacy risk? How much are we asking holder's to do?<br>
-10) Do application integrity checks need to be performed for local device checks?<br>
-11) Nonces need to be added to the model.<br>
-      </p>
         A <dfn>BiometricVectorConfidenceMethod</dfn> enables an [=issuer=] to embed
         biometric <em>vectors</em> in a [=verifiable credential=] so that a
         [=verifier=] can increase their confidence that the
@@ -672,6 +695,50 @@ The Biometric Vector Confidence Method is unstable and continues to be refined b
         representations produced by a matching model. Vectors from different
         models are not interchangeable.
       </p>
+
+      <section>
+        <h4>Use Cases</h4>
+
+        <p>
+          <strong>Age verification at point of sale.</strong> When a consumer
+          purchases age-restricted goods, the clerk currently handles the
+          consumer's physical ID, exposing full name, address, and date of
+          birth — creating risks of identity theft and physical safety. With
+          a biometric vector confidence method, the consumer's device performs
+          a biometric match and sends only a signed verification result to the
+          point-of-sale system. The clerk never sees the consumer's personal
+          information and never has to judge whether a document is authentic.
+        </p>
+        <p>
+          <strong>Account recovery.</strong> When a user loses access to an
+          account through a forgotten password or lost device, service
+          providers typically rely on insecure knowledge-based authentication
+          or manual support processes. A biometric vector confidence method
+          enables automated recovery by comparing a fresh biometric capture
+          against vectors enrolled at registration — stronger than security
+          questions and faster than customer support, without storing photos.
+        </p>
+        <p>
+          <strong>Mobile credential holder binding.</strong> Digital
+          credentials such as mobile driver's licenses can be transferred to
+          unauthorized parties without a mechanism to verify the presenter is
+          the legitimate holder. A biometric vector confidence method provides
+          cryptographic holder binding — the credential includes enrolled
+          vectors, and the holder proves possession through a fresh biometric
+          match at the time of presentation.
+        </p>
+        <p>
+          <strong>Remote onboarding and identity proofing.</strong> When
+          organizations need to verify a person's identity remotely — for
+          employment, financial services, or government benefits — a biometric
+          vector confidence method can bind the verified identity to a
+          credential without requiring in-person appearance. The biometric
+          match confirms the person presenting themselves remotely is the same
+          person whose identity was proofed, reducing fraud while preserving
+          privacy.
+        </p>
+      </section>
+
       <p>
         A biometric vector confidence method MUST specify the following properties:
       </p>
@@ -699,12 +766,14 @@ The Biometric Vector Confidence Method is unstable and continues to be refined b
         <dd>
           An object identifying the matching model, containing a `type` property
           (MUST be `BiometricMatchingModel`) and a `matchingModel` property
-          (vendor and model identifier, e.g., `realeyes-2026-v3.2`).
+          (vendor and model identifier, e.g., `example-biometric-2026-v3.2`).
         </dd>
         <dt>`biometricVectors`</dt>
         <dd>
           Multibase-encoded (base64url-nopad) biometric vector. The format is
-          specific to the matching model that generated it.
+          specific to the matching model that generated it. An [=issuer=] MAY
+          include multiple vectors from different providers to give the
+          [=holder=] flexibility in selecting a verification service.
         </dd>
       </dl>
       <p>
@@ -714,9 +783,9 @@ The Biometric Vector Confidence Method is unstable and continues to be refined b
         <dt>`service`</dt>
         <dd>
           A service endpoint for server-assisted verification, following the
-          service definition structure from [[[DID-CORE]]] [[DID-CORE]],
-          containing `id`, `type` (`BiometricVerificationService`), and
-          `serviceEndpoint` properties.
+          service definition structure from [[DID-CORE]], containing `id`,
+          `type` (`BiometricVerificationService`), and `serviceEndpoint`
+          properties.
         </dd>
       </dl>
       <p>
@@ -751,11 +820,11 @@ The Biometric Vector Confidence Method is unstable and continues to be refined b
       "confidenceMethod": {
         "id": "urn:uuid:a7f8c3d1-4b2e-4f9a-8c6d-1e3b5a7f9c2d",
         "type": "BiometricVectorConfidenceMethod",
-        "biometricType": "face",
-        "inputType": "video",
+        "biometricModality": "face",
+        "captureFormat": "video",
         "biometricModel": {
           "type": "BiometricMatchingModel",
-          "matchingModel": "realeyes-2026-v3.2"
+          "matchingModel": "example-biometric-2026-v3.2"
         },
         "biometricVectors": "uAVvLMv6gm...MNam"
       },
@@ -840,16 +909,16 @@ The Biometric Vector Confidence Method is unstable and continues to be refined b
       "confidenceMethod": {
         "id": "urn:uuid:a7f8c3d1-4b2e-4f9a-8c6d-1e3b5a7f9c2d",
         "type": "BiometricVectorConfidenceMethod",
-        "biometricType": "face",
-        "inputType": "video",
+        "biometricModality": "face",
+        "captureFormat": "video",
         "biometricModel": {
           "type": "BiometricMatchingModel",
-          "matchingModel": "realeyes-2026-v3.2"
+          "matchingModel": "example-biometric-2026-v3.2"
         },
         "service": {
           "id": "urn:uuid:service-1",
           "type": "BiometricVerificationService",
-          "serviceEndpoint": "https://api.realeyesit.com/verify/v3"
+          "serviceEndpoint": "https://biometric-provider.example/verify/v3"
         },
         "biometricVectors": "uAVvLMv6gm...MNam"
       },
@@ -895,7 +964,7 @@ The Biometric Vector Confidence Method is unstable and continues to be refined b
       "https://www.w3.org/ns/credentials/examples/v2"
     ],
     "type": ["VerifiableCredential", "BiometricVerificationCredential"],
-    "issuer": "did:web:realeyesit.com",
+    "issuer": "did:web:biometric-provider.example",
     "validFrom": "2026-05-15T14:30:00Z",
     "validUntil": "2026-05-15T14:45:00Z",
     "credentialSubject": {
@@ -914,7 +983,7 @@ The Biometric Vector Confidence Method is unstable and continues to be refined b
       "cryptosuite": "ecdsa-rdfc-2019",
       "created": "2026-05-15T14:30:05Z",
       "challenge": "9a4f2c8b-3e7d-4f1a-b5c9-2d8e6f0a1b3c",
-      "verificationMethod": "did:web:realeyesit.com#key-1",
+      "verificationMethod": "did:web:biometric-provider.example#key-1",
       "proofPurpose": "assertionMethod",
       "proofValue": "z58DAdFfa9SkqZMVPxAQpic7ndTeel..."
     }
