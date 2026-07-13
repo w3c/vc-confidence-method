@@ -657,28 +657,28 @@ method</a>, such as a public key, by
         <ol>
           <li>The specification needs to be agnostic to biometric matching
             providers and not favor any particular proprietary or open
-            approach/types.</li>
-          <li>Model/vector data might be combined since they are associated
+            approaches or types.</li>
+          <li>Model and vector data might be combined since they are associated
             with one another. It doesn't really make sense to decouple the
-            model and the vector information. base64url encoded CBOR might
-            be a better approach to hold this information.</li>
+            model and the vector information. `base64url` encoded CBOR might
+            be a better approach to holding this information.</li>
           <li>How do we specify examples with open matching models, which
-            need to exist in the spec.</li>
+            need to exist in the spec?</li>
           <li>Clarify that the issuer can provide multiple vectors from
             different providers when the credential is issued.</li>
-          <li>There is no standardized ZKP to do biometric matching yet,
+          <li>There is no standardized ZKP for biometric matching yet,
             but the group believes that is the ideal end-state.</li>
           <li>Issuers putting service URLs into the biometric matching model
             might not be the best design and will need to be refined. More
-            work will need to be done to figure out how the negotiation is
-            performed between the holder and the verifier, and the holder
-            and the issuer.</li>
+            work will be needed to figure out how the negotiation is to be
+            performed between the holder and the verifier, and between the
+            holder and the issuer.</li>
           <li>Where should this information be published? Is it safe to put
             this in the DID Document?</li>
           <li>Describe "ideal state" use cases in the specification.</li>
-          <li>How do holder's find "the right" biometric provider? Is it
+          <li>How do holders find "the right" biometric provider? Is it
             asking too much of the holder? Is that a security/privacy risk?
-            How much are we asking holder's to do?</li>
+            How much are we asking holders to do?</li>
           <li>Do application integrity checks need to be performed for local
             device checks?</li>
           <li>Nonces need to be added to the model.</li>
@@ -719,23 +719,23 @@ method</a>, such as a public key, by
           questions and faster than customer support, without storing photos.
         </p>
         <p>
-          <strong>Mobile credential holder binding.</strong> Digital
+          <strong>Mobile credential presenter restriction.</strong> Digital
           credentials such as mobile driver's licenses can be transferred to
-          unauthorized parties without a mechanism to verify the presenter is
-          the legitimate holder. A biometric vector confidence method provides
-          cryptographic holder binding — the credential includes enrolled
-          vectors, and the holder proves possession through a fresh biometric
-          match at the time of presentation.
+          unauthorized parties without a mechanism to verify whether a presenter
+          is the legitimate and intended presenter. A biometric vector confidence
+          method provides cryptographic verification of a presenter — the credential
+          includes enrolled vectors, and the presenter proves authorized possession
+          through a fresh biometric match at the time of presentation.
         </p>
         <p>
           <strong>Remote onboarding and identity proofing.</strong> When
-          organizations need to verify a person's identity remotely — for
+          organizations need to verify a person's identity remotely — e.g., for
           employment, financial services, or government benefits — a biometric
           vector confidence method can bind the verified identity to a
-          credential without requiring in-person appearance. The biometric
-          match confirms the person presenting themselves remotely is the same
-          person whose identity was proofed, reducing fraud while preserving
-          privacy.
+          credential without requiring in-person presence. A biometric
+          match confirms that the person presenting themselves remotely is the same
+          person whose identity was proven during issuance, reducing fraud while
+          preserving privacy.
         </p>
       </section>
 
@@ -783,8 +783,8 @@ method</a>, such as a public key, by
         <dt>`service`</dt>
         <dd>
           A service endpoint for server-assisted verification, following the
-          service definition structure from [[DID-CORE]], containing `id`,
-          `type` (`BiometricVerificationService`), and `serviceEndpoint`
+          service definition structure from [[[DID-CORE]] ][[DID-CORE]], containing
+          `id`, `type` (`BiometricVerificationService`), and `serviceEndpoint`
           properties.
         </dd>
       </dl>
