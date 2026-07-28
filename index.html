@@ -638,19 +638,12 @@ method</a>, such as a public key, by
         </p>
       </dd>
     </dl>
-    <section>
-      <h3>Verification Confidence</h3>
-      <p>TBD</p>
-    </section>
-    <section>
-      <h3>Biometric Image Confidence</h3>
-      <p>TBD</p>
-    </section>
+
     <section>
       <h3>Cryptographic Key</h3>
       <p>
 A cryptographic key confidence method enables an [=issuer=] to bind a specific
-public key, expressed using a format such as
+cryptographic public key, expressed using a format such as
 <a data-cite="VC-DATA-INTEGRITY#Multikey">Multikey</a> or
 <a data-cite="VC-DATA-INTEGRITY#JsonWebKey">JsonWebKey</a>, to a [=subject=] in
 a [=verifiable credential=]. The [=issuer=] records the public key that was in
@@ -658,38 +651,39 @@ the [=subject=]'s possession at the time of issuance, providing [=verifiers=]
 with a cryptographic anchor they can use to confirm that a presenter controls
 the corresponding private key. Because the binding is asserted by the [=issuer=]
 and protected by the credential's securing mechanism, a [=verifier=] can trust
-that the key material reflects what the [=issuer=] verified at issuance time.
+that the cryptographic key material reflects what the [=issuer=] verified at
+issuance time.
       </p>
 
-      <pre class="example" title="Cryptographic key confidence methods expressed in a verifiable credential">
+      <pre class="example nohighlight" title="Cryptographic key confidence methods expressed in a verifiable credential">
 {
   "@context": [
     "https://www.w3.org/ns/credentials/v2",
     "https://www.w3.org/ns/credentials/examples/v2"
   ],
-  "id": "http://example.edu/credentials/1234",
   "type": ["VerifiableCredential", "EmployeeCredential"],
   "issuer": "https://example.com/issuers/42",
-  "validFrom": "2024-01-15T00:00:00Z",
+  "validFrom": "2026-07-15T00:00:00Z",
   "credentialSubject": {
-    "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
     "name": "Alice Doe",
-    "confidenceMethod": [{
-      "id": "did:example:ebfeb1f712ebc6f1c276e12ec21#key-1",
+    <span class="highlight">"confidenceMethod": [{
+      <span class="comment">// express public key inline</span>
       "type": "Multikey",
-      "controller": "did:example:ebfeb1f712ebc6f1c276e12ec21",
       "publicKeyMultibase": "zH3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"
     }, {
-      "id": "urn:uuid:818d5ca0-3978-11f0-8658-4f17a1afd652#key-abc",
+      <span class="comment">// express public key by reference</span>
+      "id": "did:example:123456789#key-1",
+      "type": "Multikey"
+    }, {
+      <span class="comment">// multiple public key formats are supported</span>
       "type": "JsonWebKey",
-      "controller": "urn:uuid:818d5ca0-3978-11f0-8658-4f17a1afd652",
       "publicKeyJwk": {
         "crv": "Ed25519",
         "x": "VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ",
         "kty": "OKP",
         "kid": "_Qq0UL2Fq651Q0Fjd6TvnYE-faHiOpRlPVQcY_-tA4A"
       }
-    }]
+    }]</span>
   },
   "proof": { <span class="comment">...</span> }
 }
@@ -727,23 +721,24 @@ requiring the [=issuer=] to reissue the [=verifiable credential=], so long as
 the [=subject=] maintains control of the identifier itself.
       </p>
 
-      <pre class="example" title="Controlled Identifier confidence method expressed in a verifiable credential">
+      <pre class="example nohighlight" title="Controlled Identifier confidence method expressed in a verifiable credential">
 {
   "@context": [
     "https://www.w3.org/ns/credentials/v2",
     "https://www.w3.org/ns/credentials/examples/v2"
   ],
-  "id": "http://example.edu/credentials/5678",
   "type": ["VerifiableCredential", "MembershipCredential"],
   "issuer": "https://example.org/issuers/7",
-  "validFrom": "2024-03-01T00:00:00Z",
+  "validFrom": "2026-07-01T00:00:00Z",
   "credentialSubject": {
-    "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
-    "memberSince": "2020-06-01",
-    "confidenceMethod": {
+    "name": "Alex Utopian"
+    "memberOf": {
+      "name": "Utopia Libraries"
+    },
+    <span class="highlight">"confidenceMethod": {
       "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
       "type": "DecentralizedIdentifierDocument"
-    }
+    }</span>
   },
   "proof": { <span class="comment">...</span> }
 }
@@ -766,6 +761,11 @@ protocol accommodates key rotation transparently: the [=holder=] may present
 using any currently authorized authentication key without requiring a new
 credential from the [=issuer=].
       </p>
+    </section>
+
+    <section>
+      <h3>Biometric Image Confidence</h3>
+      <p>TBD</p>
     </section>
 
     <section>
