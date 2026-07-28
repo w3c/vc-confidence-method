@@ -638,14 +638,136 @@ method</a>, such as a public key, by
         </p>
       </dd>
     </dl>
+
     <section>
-      <h3>Verification Confidence</h3>
-      <p>TBD</p>
+      <h3>Cryptographic Key</h3>
+      <p>
+A cryptographic key confidence method enables an [=issuer=] to bind a specific
+cryptographic public key, expressed using a format such as
+<a data-cite="VC-DATA-INTEGRITY#Multikey">Multikey</a> or
+<a data-cite="VC-DATA-INTEGRITY#JsonWebKey">JsonWebKey</a>, to a [=subject=] in
+a [=verifiable credential=]. The [=issuer=] records the public key that was in
+the [=subject=]'s possession at the time of issuance, providing [=verifiers=]
+with a cryptographic anchor they can use to confirm that a presenter controls
+the corresponding private key. Because the binding is asserted by the [=issuer=]
+and protected by the credential's securing mechanism, a [=verifier=] can trust
+that the cryptographic key material reflects what the [=issuer=] verified at
+issuance time.
+      </p>
+
+      <pre class="example nohighlight" title="Cryptographic key confidence methods expressed in a verifiable credential">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://www.w3.org/ns/credentials/examples/v2"
+  ],
+  "type": ["VerifiableCredential", "EmployeeCredential"],
+  "issuer": "https://example.com/issuers/42",
+  "validFrom": "2026-07-15T00:00:00Z",
+  "credentialSubject": {
+    "name": "Alice Doe",
+    <span class="highlight">"confidenceMethod": [{
+      <span class="comment">// express public key inline</span>
+      "type": "Multikey",
+      "publicKeyMultibase": "zH3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"
+    }, {
+      <span class="comment">// express public key by reference</span>
+      "id": "did:example:123456789#key-1",
+      "type": "Multikey"
+    }, {
+      <span class="comment">// multiple public key formats are supported</span>
+      "type": "JsonWebKey",
+      "publicKeyJwk": {
+        "crv": "Ed25519",
+        "x": "VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ",
+        "kty": "OKP",
+        "kid": "_Qq0UL2Fq651Q0Fjd6TvnYE-faHiOpRlPVQcY_-tA4A"
+      }
+    }]</span>
+  },
+  "proof": { <span class="comment">...</span> }
+}
+      </pre>
+
+      <p>
+During a [=verifiable presentation=], a [=verifier=] uses the public key in the
+confidence method to execute a proof-of-possession protocol. The [=verifier=]
+issues a cryptographic challenge, typically a nonce bound to the session, and
+the [=holder=] signs the challenge using the private key corresponding to the
+public key recorded in the confidence method. The [=verifier=] then verifies
+that signature against the asserted public key. A successful verification
+establishes that the presenter controls the private key the [=issuer=] bound to
+the [=subject=] at issuance, increasing confidence that the presenter is the
+intended [=subject=] of the [=verifiable credential=].
+      </p>
     </section>
+
+    <section>
+      <h3>Controlled Identifier</h3>
+      <p>
+A controlled identifier confidence method enables an [=issuer=] to bind a
+[=subject=] to a
+<a data-cite="CID#dfn-controlled-identifier-document">controlled identifier
+document</a> that they control, rather than embedding a specific key directly in
+the [=verifiable credential=]. Decentralized Identifiers (DIDs) are one
+well-known type of controlled identifier. The [=issuer=] records the controlled
+identifier of the [=subject=] as verified at the time of issuance, allowing the
+[=verifier=] to retrieve the current controlled identifier document and discover
+the verification methods listed in the subject's
+<a data-cite="CID#dfn-authentication">authentication</a> verification
+relationship at presentation time. This approach accommodates key rotation and
+other lifecycle changes to the [=subject=]'s cryptographic material without
+requiring the [=issuer=] to reissue the [=verifiable credential=], so long as
+the [=subject=] maintains control of the identifier itself.
+      </p>
+
+      <pre class="example nohighlight" title="Controlled Identifier confidence method expressed in a verifiable credential">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://www.w3.org/ns/credentials/examples/v2"
+  ],
+  "type": ["VerifiableCredential", "MembershipCredential"],
+  "issuer": "https://example.org/issuers/7",
+  "validFrom": "2026-07-01T00:00:00Z",
+  "credentialSubject": {
+    "name": "Alex Utopian"
+    "memberOf": {
+      "name": "Utopia Libraries"
+    },
+    <span class="highlight">"confidenceMethod": {
+      "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+      "type": "DecentralizedIdentifierDocument"
+    }</span>
+  },
+  "proof": { <span class="comment">...</span> }
+}
+      </pre>
+
+      <p>
+During a [=verifiable presentation=], the [=verifier=] resolves the controlled
+identifier in the confidence method to obtain the current controlled identifier
+document. The [=verifier=] extracts the
+<a data-cite="VC-DATA-INTEGRITY#dfn-verification-method">verification
+methods</a> listed in the
+<a data-cite="CID#dfn-authentication">authentication</a> verification
+relationship of that document, then issues a cryptographic challenge and
+requests that the [=holder=] produce a proof using one of those authentication
+verification methods. If the [=holder=] successfully signs the challenge with an
+authorized key, the [=verifier=] gains confidence that the presenter controls
+the identifier that the [=issuer=] associated with the [=subject=] at issuance.
+Because controlled identifier documents are maintained by the [=subject=], this
+protocol accommodates key rotation transparently: the [=holder=] may present
+using any currently authorized authentication key without requiring a new
+credential from the [=issuer=].
+      </p>
+    </section>
+
     <section>
       <h3>Biometric Image Confidence</h3>
       <p>TBD</p>
     </section>
+
     <section>
       <h3>Biometric Vector Confidence Method</h3>
 
