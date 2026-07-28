@@ -647,6 +647,68 @@ method</a>, such as a public key, by
       <p>TBD</p>
     </section>
     <section>
+      <h3>Cryptographic Key</h3>
+      <p>
+A cryptographic key confidence method enables an [=issuer=] to bind a specific
+public key, expressed using a format such as
+<a data-cite="VC-DATA-INTEGRITY#Multikey">Multikey</a> or
+<a data-cite="VC-DATA-INTEGRITY#JsonWebKey">JsonWebKey</a>, to a [=subject=] in
+a [=verifiable credential=]. The [=issuer=] records the public key that was in
+the [=subject=]'s possession at the time of issuance, providing [=verifiers=]
+with a cryptographic anchor they can use to confirm that a presenter controls
+the corresponding private key. Because the binding is asserted by the [=issuer=]
+and protected by the credential's securing mechanism, a [=verifier=] can trust
+that the key material reflects what the [=issuer=] verified at issuance time.
+      </p>
+
+      <pre class="example" title="Cryptographic key confidence methods expressed in a verifiable credential">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://www.w3.org/ns/credentials/examples/v2"
+  ],
+  "id": "http://example.edu/credentials/1234",
+  "type": ["VerifiableCredential", "EmployeeCredential"],
+  "issuer": "https://example.com/issuers/42",
+  "validFrom": "2024-01-15T00:00:00Z",
+  "credentialSubject": {
+    "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+    "name": "Alice Doe",
+    "confidenceMethod": [{
+      "id": "did:example:ebfeb1f712ebc6f1c276e12ec21#key-1",
+      "type": "Multikey",
+      "controller": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+      "publicKeyMultibase": "zH3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"
+    }, {
+      "id": "urn:uuid:818d5ca0-3978-11f0-8658-4f17a1afd652#key-abc",
+      "type": "JsonWebKey",
+      "controller": "urn:uuid:818d5ca0-3978-11f0-8658-4f17a1afd652",
+      "publicKeyJwk": {
+        "crv": "Ed25519",
+        "x": "VCpo2LMLhn6iWku8MKvSLg2ZAoC-nlOyPVQaO3FxVeQ",
+        "kty": "OKP",
+        "kid": "_Qq0UL2Fq651Q0Fjd6TvnYE-faHiOpRlPVQcY_-tA4A"
+      }
+    }]
+  },
+  "proof": { <span class="comment">...</span> }
+}
+      </pre>
+
+      <p>
+During a [=verifiable presentation=], a [=verifier=] uses the public key in the
+confidence method to execute a proof-of-possession protocol. The [=verifier=]
+issues a cryptographic challenge, typically a nonce bound to the session, and
+the [=holder=] signs the challenge using the private key corresponding to the
+public key recorded in the confidence method. The [=verifier=] then verifies
+that signature against the asserted public key. A successful verification
+establishes that the presenter controls the private key the [=issuer=] bound to
+the [=subject=] at issuance, increasing confidence that the presenter is the
+intended [=subject=] of the [=verifiable credential=].
+      </p>
+    </section>
+
+    <section>
       <h3>Biometric Vector Confidence Method</h3>
 
       <div class="issue atrisk"
