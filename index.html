@@ -569,8 +569,9 @@ method</a>, such as a public key, by
     "validFrom": "2010-01-01T19:23:24Z",
     "credentialSubject": {
       <span class="highlight">"confidenceMethod": [{
-        "type": "BiometricPortraitImage",
-        "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAgAAZABkAAD",
+        "type": "BiometricImage",
+        "biometricModality": "face",
+        "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAgAAZABkAAD"
       }, {
         "id": "urn:uuid:818d5ca0-3978-11f0-8658-4f17a1afd652#key-abc",
         "type": "JsonWebKey",
@@ -629,10 +630,10 @@ method</a>, such as a public key, by
           document.
         </p>
       </dd>
-      <dt><dfn>BiometricImageConfidence</dfn></dt>
+      <dt><dfn>BiometricImage</dfn></dt>
       <dd>
         <p>
-          BiometricImageConfidence specifies how to use an image
+          BiometricImage specifies how to use an image
           in a verifiable credential for recognizing the subject of
           the credential.
         </p>
@@ -643,8 +644,73 @@ method</a>, such as a public key, by
       <p>TBD</p>
     </section>
     <section>
-      <h3>Biometric Image Confidence</h3>
-      <p>TBD</p>
+      <h3>Biometric Image</h3>
+
+      <p>
+        A [=BiometricImage=] enables an [=issuer=] to embed an image
+        of a [=subject=] in a [=verifiable credential=], so that
+        a [=verifier=] can compare that image against the person presenting
+        the credential and increase the confidence that the
+        presenter is the [=subject=] that the [=issuer=] made [=claims=] about.
+      </p>
+
+      <p>
+        A biometric image confidence method is defined by the following properties:
+      </p>
+
+      <dl>
+        <dt>`type`</dt>
+        <dd>
+          REQUIRED. The value MUST be `BiometricImage`.
+        </dd>
+
+        <dt>`biometricModality`</dt>
+        <dd>
+          REQUIRED. The modality captured by the image. In this version of
+          this specification, the value MUST be `face`.
+        </dd>
+
+        <dt>`image`</dt>
+        <dd>
+          REQUIRED. A `data:` URL [[RFC2397]] using `base64` encoding, whose
+          media type is an image media type, such as `image/jpeg` or
+          `image/png`. The image MUST be embedded in the [=verifiable
+          credential=] rather than referenced by a dereferenceable URL.
+        </dd>
+      </dl>
+
+      <p>
+        A [=verifier=] evaluates a <a>BiometricImage</a> by
+        verifying the [=verifiable credential=], decoding the value of
+        `image`, and comparing the decoded image against the person
+        presenting the credential.
+      </p>
+
+      <pre class="example nohighlight"
+        title="Usage of a biometric image confidence method">
+  {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2",
+      "https://www.w3.org/ns/credentials/examples/v2"
+    ],
+    "id": "http://example.edu/credentials/3732",
+    "type": ["VerifiableCredential", "UniversityDegreeCredential"],
+    "issuer": "https://example.edu/issuers/14",
+    "validFrom": "2010-01-01T19:23:24Z",
+    "credentialSubject": {
+      <span class="highlight">"confidenceMethod": {
+        "type": "BiometricImage",
+        "biometricModality": "face",
+        "image": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAgAAZABkAAD"
+      }</span>,
+      "degree": {
+        "type": "BachelorDegree",
+        "name": "Bachelor of Science and Arts"
+      }
+    },
+    "proof": { <span class="comment">...</span> }
+  }
+      </pre>
     </section>
     <section>
       <h3>Biometric Vector Confidence Method</h3>
