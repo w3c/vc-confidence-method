@@ -3,17 +3,18 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Confidence Method v1.0</title>
+  <title>Verifiable Credential Confidence Methods v1.0</title>
   <script src="https://www.w3.org/Tools/respec/respec-w3c"
     class="remove"></script>
   <script class="remove"
-    src="https://cdn.jsdelivr.net/gh/w3c/respec-vc@3.4.3/dist/main.js">
+    src="https://cdn.jsdelivr.net/gh/w3c/respec-vc@3.5.1/dist/main.js">
     </script>
   <script class="remove">
     // All config options at https://respec.org/docs/
     var respecConfig = {
       specStatus: "FPWD",
-      publishDate: "2025-10-30",
+      // https://respec.org/docs/#publishDate
+      // publishDate: "2025-10-30",
       editors: [{
         name: "Joe Andrieu",
         url: "https://www.linkedin.com/in/joe-andrieu/",
@@ -326,6 +327,31 @@
         a biometric.
       </li>
     </ul>
+
+    <section class="normative">
+      <h3>Terminology</h3>
+      <p>
+        Some terminology used throughout this document is defined in the
+        <a data-cite="VC-DATA-MODEL-2.0#terminology">Terminology</a>
+        section of the [[[VC-DATA-MODEL-2.0]]] specification as well as
+        the
+        <a data-cite="CID#terminology">Terminology</a> section of the
+        [[[CID]]] specification. This section defines addition terms
+        used
+        throughout this specification.
+      </p>
+
+      <dl class="termlist definitions" data-sort="ascending">
+        <dt><dfn class="export">assurance level</dfn></dt>
+        <dd>
+          A technique for establishing the identity of an individual in
+          terms of real-world evidence and observations, according to a
+          specific process, typically defined by national and
+          international standards organizations like NIST in the US and
+          eIDAS in the EU.
+        </dd>
+      </dl>
+    </section>
   </section>
   <section id="conformance">
     <p>
@@ -472,7 +498,6 @@ method</a>, such as a public key, by
 
     <dl>
       <dt><dfn>confidenceMethod</dfn></dt>
-      <dd>
       <dd>
         <p>
           If present, the value of the `confidenceMethod` property is
@@ -997,6 +1022,7 @@ method</a>, such as a public key, by
         </pre>
       </section>
     </section>
+  </section>
 
   <section>
     <h2>Assurance Levels</h2>
@@ -1013,36 +1039,13 @@ method</a>, such as a public key, by
       </dd>
     </dl>
     <section>
-      <h3>NIST_800-63-3_LOA</h3>
+      <h3>NIST_800-63-4_LOA</h3>
       <p>TBD</p>
     </section>
     <section>
       <h3>EIDAS_LOA</h3>
       <p>TBD</p>
     </section>
-  </section>
-  <section class="normative">
-    <h2>Terminology</h2>
-    <p>
-      Some terminology used throughout this document is defined in the
-      <a data-cite="VC-DATA-MODEL-2.0#terminology">Terminology</a>
-      section of the [[[VC-DATA-MODEL-2.0]]] specification as well as
-      the
-      <a data-cite="CID#terminology">Terminology</a> section of the
-      [[[CID]]] specification. This section defines addition terms
-      used
-      throughout this specification.
-    </p>
-
-    <dl class="termlist definitions" data-sort="ascending">
-      <dt><dfn class="export">assurance level</dfn></dt>
-      <dd>
-        A technique for establishing the identity of an individual in
-        terms of real-world evidence and observations, according to a
-        specific process, typically defined by national and
-        international standards organizations like NIST in the US and
-        eIDAS in the EU.
-      </dd>
   </section>
   <section>
     <h2>Security Considerations</h2>
