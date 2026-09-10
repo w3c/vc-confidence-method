@@ -752,8 +752,7 @@ A cryptographic key confidence method enables an [=issuer=] to bind a specific
 cryptographic public key, expressed using a format such as
 <a data-cite="VC-DATA-INTEGRITY#Multikey">Multikey</a> or
 <a data-cite="VC-DATA-INTEGRITY#JsonWebKey">JsonWebKey</a>, to a [=subject=] in
-a [=verifiable credential=]. The [=issuer=] records the public key that was in
-the [=subject=]'s possession at the time of issuance, providing [=verifiers=]
+a [=verifiable credential=]. The [=issuer=] records a public key presumed to be usable by the [=subject=], or a guardian of the subject, at the time of issuance (proof of use). Issuers SHOULD verify the use of the private key associated with that public key before issuance. This provides [=verifiers=]
 with a cryptographic anchor they can use to confirm that a presenter controls
 the corresponding private key. Because the binding is asserted by the [=issuer=]
 and protected by the credential's securing mechanism, a [=verifier=] can trust
