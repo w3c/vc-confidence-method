@@ -55,14 +55,14 @@
           "id": "NIST SP 800-63-4"
         },
         "EIDAS2": {
-          "title": "Regulation (EU) 2024/1183 of the European Parliament and of the Council of 11 April 2024 amending Regulation (EU) No 910/2014 as regards establishing the European Digital Identity Framework",
-          "href": "http://data.europa.eu/eli/reg/2024/1183/oj",
+          "title": "Regulation (EU) No 910/2014 of the European Parliament and of the Council of 23 July 2014 on electronic identification and trust services for electronic transactions in the internal market and repealing Directive 1999/93/EC (consolidated version)",
+          "href": "https://eur-lex.europa.eu/eli/reg/2014/910/2024-10-18#art_8",
           "authors": [
             "European Parliament",
             "Council of the European Union"
           ],
-          "publisher": "Official Journal of the European Union",
-          "date": "30 April 2024"
+          "publisher": "Publications Office of the European Union",
+          "date": "18 October 2024"
         }
       },
       doJsonLd: true,
@@ -1219,26 +1219,56 @@ credential from the [=issuer=].
 
   <section>
     <h2>Assurance Levels</h2>
+
+    <p>
+      An [=assurance level=] enables an [=issuer=] to declare the
+      process by which it established the identity of a [=subject=]
+      before issuing a [=verifiable credential=] about that
+      [=subject=]. A [=verifier=] can execute confidence methods and
+      rely on assurance levels to meet its verification requirements.
+      Each assurance level type names a framework and constrains its
+      values to the levels that framework defines.
+    </p>
+
     <dl>
-      <dt><dfn>NIST_800-63-4_LOA</dfn></dt>
+      <dt><dfn>NIST-SP-800-63-4</dfn></dt>
       <dd>
-        <p>NIST_800-63-4 defines an assurance level based on the
-          [[NIST-SP-800-63-4]] specification.</p>
+        <p>NIST-SP-800-63-4 defines an assurance level based on the
+          [[NIST-SP-800-63-4]] specification. It specifies an
+          `identityAssuranceLevel`, whose value MUST be `IAL1`, `IAL2`,
+          or `IAL3`.</p>
       </dd>
-      <dt><dfn>EIDAS_LOA</dfn></dt>
+      <dt><dfn>EIDAS</dfn></dt>
       <dd>
-        <p>EIDAS_LOA defines an assurance level based on the
-          [[EIDAS2]].</p>
+        <p>EIDAS defines an assurance level based on the
+          [[EIDAS2]]. It specifies a `level`, whose value MUST be
+          `low`, `substantial`, or `high`.</p>
       </dd>
     </dl>
-    <section>
-      <h3>NIST_800-63-4_LOA</h3>
-      <p>TBD</p>
-    </section>
-    <section>
-      <h3>EIDAS_LOA</h3>
-      <p>TBD</p>
-    </section>
+
+    <pre class="example nohighlight"
+      title="Usage of the assuranceLevel property of type NIST-SP-800-63-4">
+  {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2",
+      "https://www.w3.org/ns/credentials/examples/v2"
+    ],
+    "id": "http://example.gov/credentials/3732",
+    "type": ["VerifiableCredential", "ResidentCardCredential"],
+    "issuer": "https://example.gov/issuers/14",
+    "validFrom": "2010-01-01T19:23:24Z",
+    "credentialSubject": {
+      "id": "did:example:123",
+      <span class="highlight">"assuranceLevel": {
+        "type": "NIST-SP-800-63-4",
+        "identityAssuranceLevel": "IAL2"
+      }</span>,
+      "givenName": "Jane",
+      "familyName": "Doe"
+    },
+    "proof": { <span class="comment">...</span> }
+  }
+    </pre>
   </section>
   <section>
     <h2>Security Considerations</h2>
