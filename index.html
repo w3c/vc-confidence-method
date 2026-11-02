@@ -328,6 +328,32 @@
       </li>
     </ul>
 
+    <p>
+      A confidence method increases confidence about the relationship
+      between a presenter and a [=subject=] identified in a
+      [=verifiable credential=] — for example, that the presenter can
+      demonstrate proof-of-use of a cryptographic key the [=issuer=]
+      bound to that [=subject=], or that they match a biometric the
+      [=issuer=] recorded. It does <em>not</em> express authorization
+      for one party to present or act on behalf of another, nor does it
+      encode the [=verifier=]'s business rules for accepting such a
+      presentation. Whether a parent may present a child's credential,
+      or a pet owner may present a pet's credential, is determined by
+      the [=verifier=] based on [=claims=] in the credential (and other
+      policy), not by the presence of a confidence method alone.
+    </p>
+    <p>
+      When the [=holder=] is not the only [=subject=], or when
+      relationships among subjects matter, issuers SHOULD model those
+      parties as multiple subjects in the [=verifiable credential=], as
+      described in
+      <a data-cite="VC-DATA-MODEL-2.0#credential-subject">Credential
+      Subject</a> of [[[VC-DATA-MODEL-2.0]]]. Each subject MAY carry its
+      own `confidenceMethod`. See
+      <a href="#multiple-subjects-and-confidence-methods"></a> for
+      examples.
+    </p>
+
     <section class="normative">
       <h3>Terminology</h3>
       <p>
@@ -578,6 +604,96 @@ method</a>, such as a public key, by
       such as the
       `credentialSubject.id`.
     </p>
+
+    <section>
+      <h3>Multiple Subjects and Confidence Methods</h3>
+      <p>
+        A [=verifiable credential=] MAY identify more than one
+        [=subject=] by expressing `credentialSubject` as an array, as
+        described in [[[VC-DATA-MODEL-2.0]]]. Each subject MAY include
+        a `confidenceMethod` that applies only to that subject.
+        Relationship [=claims=] among subjects (for example, that one
+        subject is the owner of another) are ordinary credential claims;
+        they are not expressed through `confidenceMethod`. A
+        [=verifier=] that needs both identity assurance and
+        authorization MUST evaluate the relevant confidence methods
+        <em>and</em> the relationship claims (and any other policy)
+        separately.
+      </p>
+
+      <pre class="example nohighlight"
+        title="Multiple subjects, each with a confidence method">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://www.w3.org/ns/credentials/examples/v2"
+  ],
+  "type": ["VerifiableCredential", "MarriageCredential"],
+  "issuer": "https://example.gov/issuers/clerk",
+  "validFrom": "2026-06-01T00:00:00Z",
+  "credentialSubject": [{
+    "id": "did:example:spouse-a",
+    "name": "Alex Utopian",
+    "role": "spouse",
+    <span class="highlight">"confidenceMethod": {
+      "type": "Multikey",
+      "publicKeyMultibase": "zH3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"
+    }</span>
+  }, {
+    "id": "did:example:spouse-b",
+    "name": "Jordan Utopian",
+    "role": "spouse",
+    <span class="highlight">"confidenceMethod": {
+      "id": "did:example:spouse-b#key-1",
+      "type": "Multikey"
+    }</span>
+  }]
+}
+      </pre>
+      <p>
+        In the example above, a [=verifier=] can require each presenting
+        spouse to exercise the confidence method bound to that spouse's
+        subject entry. Successful evaluation increases confidence that
+        the presenter is the identified spouse; it does not by itself
+        authorize either spouse to present for the other.
+      </p>
+
+      <pre class="example nohighlight"
+        title="Two subjects with a confidence method on only the presenting owner">
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://www.w3.org/ns/credentials/examples/v2"
+  ],
+  "type": ["VerifiableCredential", "PetLicenseCredential"],
+  "issuer": "https://example.city/issuers/animal-control",
+  "validFrom": "2026-03-15T00:00:00Z",
+  "credentialSubject": [{
+    "id": "https://example.city/pets/fido-42",
+    "name": "Fido",
+    "species": "Canis familiaris",
+    "licenseNumber": "A-1042"
+  }, {
+    "id": "did:example:owner-7",
+    "name": "Sam Owner",
+    "owns": "https://example.city/pets/fido-42",
+    <span class="highlight">"confidenceMethod": {
+      "type": "Multikey",
+      "publicKeyMultibase": "z6MkiTBz1ymuepAQ4HEHYSF1H8quG5GLVVQR3djdX3mDooWp"
+    }</span>
+  }]
+}
+      </pre>
+      <p>
+        In the pet license example, only the owner subject has a
+        confidence method. A [=verifier=] can use that method to
+        increase confidence that the presenter is the owner recorded by
+        the [=issuer=], and can use the `owns` claim (and local policy)
+        to decide whether that owner is authorized to present the pet's
+        license. The confidence method alone does not establish that
+        authorization.
+      </p>
+    </section>
 
     <p>
       The following example demonstrates the various types of
