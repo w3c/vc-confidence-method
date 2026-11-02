@@ -521,6 +521,8 @@ method</a>, such as a public key, by
           specify an `id`. The precise properties and semantics of
           each confidence method are determined by the
           specific `confidenceMethod` type definition.
+          See <a href="#referencing-external-documents"></a> for how
+          `id` and `type` values can refer to external documents.
         </p>
       </dd>
       <dt><dfn>assuranceLevel</dfn></dt>
@@ -578,6 +580,45 @@ method</a>, such as a public key, by
       such as the
       `credentialSubject.id`.
     </p>
+
+    <section>
+      <h3>Referencing External Documents</h3>
+      <p>
+        A confidence method MAY include an `id` whose value is a URL.
+        As described in
+        <a data-cite="VC-DATA-MODEL-2.0#identifiers">Identifiers</a>
+        of [[[VC-DATA-MODEL-2.0]]], an `id` value MAY be dereferenceable.
+        When it is, implementations MAY retrieve a machine-readable
+        document about the identified resource — for example, a
+        <a data-cite="VC-DATA-INTEGRITY#dfn-verification-method">verification
+        method</a>, a
+        <a data-cite="CID#Multikey">Multikey</a> or
+        <a data-cite="CID#JsonWebKey">JsonWebKey</a>
+        expressed by reference, or a
+        <a data-cite="CID#dfn-controlled-identifier-document">controlled
+        identifier document</a>. Caching such resources can reduce
+        network requests, but a controlled identifier document is
+        expected to be retrieved at presentation time so that changes
+        to its verification methods are seen; see
+        <a href="#controlled-identifier"></a>.
+      </p>
+      <p>
+        The `type` of a confidence method MAY also be expressed as a
+        URL. As described in
+        <a data-cite="VC-DATA-MODEL-2.0#types">Types</a>
+        of [[[VC-DATA-MODEL-2.0]]], a type URL SHOULD identify a
+        document that describes the type, and clients MAY use HTTP
+        content negotiation when retrieving that document.
+      </p>
+      <p>
+        Expressing cryptographic material or controlled identifiers by
+        reference, rather than embedding them inline, is a general
+        feature of [[[VC-DATA-MODEL-2.0]]] and [[[CID]]]. This
+        specification relies on those mechanisms; see
+        <a href="#cryptographic-key"></a> and
+        <a href="#controlled-identifier"></a> for concrete examples.
+      </p>
+    </section>
 
     <p>
       The following example demonstrates the various types of
@@ -747,8 +788,8 @@ method</a>, such as a public key, by
       <p>
 A cryptographic key confidence method enables an [=issuer=] to bind a specific
 cryptographic public key, expressed using a format such as
-<a data-cite="VC-DATA-INTEGRITY#Multikey">Multikey</a> or
-<a data-cite="VC-DATA-INTEGRITY#JsonWebKey">JsonWebKey</a>, to a [=subject=] in
+<a data-cite="CID#Multikey">Multikey</a> or
+<a data-cite="CID#JsonWebKey">JsonWebKey</a>, to a [=subject=] in
 a [=verifiable credential=]. The [=issuer=] records a public key presumed to be usable by, or on behalf of, the [=subject=] at the time of issuance and presentation (proof of use). Issuers SHOULD verify the use of the private key associated with that public key before issuance. This provides [=verifiers=]
 with a cryptographic anchor they can use to confirm that a presenter controls
 the corresponding private key. Because the binding is asserted by the [=issuer=]
@@ -773,7 +814,7 @@ issuance time.
       "type": "Multikey",
       "publicKeyMultibase": "zH3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"
     }, {
-      <span class="comment">// express public key by reference</span>
+      <span class="comment">// express public key by reference; see Referencing External Documents</span>
       "id": "did:example:123456789#key-1",
       "type": "Multikey"
     }, {
@@ -817,10 +858,12 @@ identifier of the [=subject=] as verified at the time of issuance, allowing the
 [=verifier=] to retrieve the current controlled identifier document and discover
 the verification methods listed in the subject's
 <a data-cite="CID#dfn-authentication">authentication</a> verification
-relationship at presentation time. This approach accommodates key rotation and
-other lifecycle changes to the [=subject=]'s cryptographic material without
-requiring the [=issuer=] to reissue the [=verifiable credential=], so long as
-the [=subject=] maintains control of the identifier itself.
+relationship at presentation time. Retrieving that document is an application of
+the general dereferenceability rules in
+<a href="#referencing-external-documents"></a>. This approach accommodates key
+rotation and other lifecycle changes to the [=subject=]'s cryptographic material
+without requiring the [=issuer=] to reissue the [=verifiable credential=], so
+long as the [=subject=] maintains control of the identifier itself.
       </p>
 
       <pre class="example nohighlight" title="Controlled Identifier confidence method expressed in a verifiable credential">
@@ -1300,6 +1343,14 @@ credential from the [=issuer=].
           reveal
           correlatable identifiers, such as public cryptographic key
           identifiers.
+        </li>
+        <li>
+          Fetching a dereferenceable `id` or `type` URL at presentation
+          time can create correlatable network signals. Prefer
+          pre-fetching and caching, and consider privacy-preserving
+          retrieval mechanisms described in [[[VC-DATA-MODEL-2.0]]],
+          when remote retrieval cannot be avoided. See
+          <a href="#referencing-external-documents"></a>.
         </li>
         <li>
           Strongly advise against using biometrics for confidence
