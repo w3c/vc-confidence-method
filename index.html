@@ -344,8 +344,9 @@
     </p>
     <p>
       When the [=holder=] is not the only [=subject=], or when
-      relationships among subjects matter, issuers SHOULD model those
-      parties as multiple subjects in the [=verifiable credential=], as
+      relationships among subjects matter, issuers are encouraged to
+      model those parties as multiple subjects in the [=verifiable
+      credential=], as
       described in
       <a data-cite="VC-DATA-MODEL-2.0#credential-subject">Credential
       Subject</a> of [[[VC-DATA-MODEL-2.0]]]. Each subject MAY carry its
@@ -612,13 +613,17 @@ method</a>, such as a public key, by
         [=subject=] by expressing `credentialSubject` as an array, as
         described in [[[VC-DATA-MODEL-2.0]]]. Each subject MAY include
         a `confidenceMethod` that applies only to that subject.
+        An [=issuer=] that needs to express a relationship among the
+        parties SHOULD model each party as a separate [=subject=].
         Relationship [=claims=] among subjects (for example, that one
         subject is the owner of another) are ordinary credential claims;
-        they are not expressed through `confidenceMethod`. A
-        [=verifier=] that needs both identity assurance and
-        authorization MUST evaluate the relevant confidence methods
-        <em>and</em> the relationship claims (and any other policy)
-        separately.
+        they are not expressed through `confidenceMethod`.
+      </p>
+      <p class="note">
+        A confidence method does not convey authorization. Evaluators
+        determine whether a presenter is authorized from relationship
+        claims and their own policy, separately from the confidence
+        that a confidence method provides.
       </p>
 
       <pre class="example nohighlight"
@@ -644,8 +649,8 @@ method</a>, such as a public key, by
     "name": "Jordan Utopian",
     "role": "spouse",
     <span class="highlight">"confidenceMethod": {
-      "id": "did:example:spouse-b#key-1",
-      "type": "Multikey"
+      "type": "Multikey",
+      "publicKeyMultibase": "z6MkqPsz1Hv4fQ2Wz7bKs9VG3wJwDxHG9nLtYc5Ryd8RBsnP"
     }</span>
   }]
 }
