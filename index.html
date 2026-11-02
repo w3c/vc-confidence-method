@@ -592,13 +592,15 @@ method</a>, such as a public key, by
         document about the identified resource — for example, a
         <a data-cite="VC-DATA-INTEGRITY#dfn-verification-method">verification
         method</a>, a
-        <a data-cite="VC-DATA-INTEGRITY#Multikey">Multikey</a> or
-        <a data-cite="VC-DATA-INTEGRITY#JsonWebKey">JsonWebKey</a>
+        <a data-cite="CID#Multikey">Multikey</a> or
+        <a data-cite="CID#JsonWebKey">JsonWebKey</a>
         expressed by reference, or a
         <a data-cite="CID#dfn-controlled-identifier-document">controlled
-        identifier document</a>. Implementations SHOULD pre-fetch and
-        cache such resources when possible, rather than fetching them
-        only at presentation time.
+        identifier document</a>. Caching such resources can reduce
+        network requests, but a controlled identifier document is
+        expected to be retrieved at presentation time so that changes
+        to its verification methods are seen; see
+        <a href="#controlled-identifier"></a>.
       </p>
       <p>
         The `type` of a confidence method MAY also be expressed as a
@@ -786,8 +788,8 @@ method</a>, such as a public key, by
       <p>
 A cryptographic key confidence method enables an [=issuer=] to bind a specific
 cryptographic public key, expressed using a format such as
-<a data-cite="VC-DATA-INTEGRITY#Multikey">Multikey</a> or
-<a data-cite="VC-DATA-INTEGRITY#JsonWebKey">JsonWebKey</a>, to a [=subject=] in
+<a data-cite="CID#Multikey">Multikey</a> or
+<a data-cite="CID#JsonWebKey">JsonWebKey</a>, to a [=subject=] in
 a [=verifiable credential=]. The [=issuer=] records a public key presumed to be usable by, or on behalf of, the [=subject=] at the time of issuance and presentation (proof of use). Issuers SHOULD verify the use of the private key associated with that public key before issuance. This provides [=verifiers=]
 with a cryptographic anchor they can use to confirm that a presenter controls
 the corresponding private key. Because the binding is asserted by the [=issuer=]
