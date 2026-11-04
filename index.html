@@ -587,8 +587,8 @@ method</a>, such as a public key, by
       and Decentralized Identifier Documents.
     </p>
 
-    <pre class="example nohighlight"
-      title="Usage of the confirmationMethod property of type VerificationKeyConfirmation">
+    <pre id="example-usage-of-the-confirmationmethod-property-of-type-verificationkeyconfirmation" class="example nohighlight"
+      title="Usage of the confidenceMethod property with multiple confidence methods">
   {
     "@context": [
       "https://www.w3.org/ns/credentials/v2",
@@ -833,11 +833,11 @@ the [=subject=] maintains control of the identifier itself.
   "issuer": "https://example.org/issuers/7",
   "validFrom": "2026-07-01T00:00:00Z",
   "credentialSubject": {
-    "name": "Alex Utopian"
+    "name": "Alex Utopian",
     "memberOf": {
       "name": "Utopia Libraries"
     },
-    <span class="highlight">"confidenceMethod": "did:example:ebfeb1f712ebc6f1c276e12ec21",</span>
+    <span class="highlight">"confidenceMethod": "did:example:ebfeb1f712ebc6f1c276e12ec21"</span>
   },
   "proof": { <span class="comment">...</span> }
 }
